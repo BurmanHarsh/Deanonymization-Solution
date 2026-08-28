@@ -2,11 +2,12 @@
 <html>
 
 <head>
-	<title>AIL-Framework</title>
+	<title>Submit · AIL Framework</title>
 	<link rel="icon" href="{{ url_for('static', filename='image/ail-icon.png')}}">
 
 	<!-- Core CSS -->
 	<link href="{{ url_for('static', filename='css/bootstrap4.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/modern-ui.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/tags.css') }}" rel="stylesheet" type="text/css" />
 
@@ -15,6 +16,7 @@
 	<script src="{{ url_for('static', filename='js/popper.min.js')}}"></script>
 	<script src="{{ url_for('static', filename='js/bootstrap4.min.js')}}"></script>
 	<script src="{{ url_for('static', filename='js/tags.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/ail-shell.js')}}"></script>
 
 </head>
 
@@ -25,12 +27,8 @@
 		<div class="modal-dialog modal-lg">
 
 			<div id="mymodalcontent" class="modal-content">
-				<div class="modal-header"
-					style="border-bottom: 4px solid #cccccc; background-color: #cccccc; color: #ffffff;">
-					<p class="heading">
-					<h1>Submitting Items ...</h1>
-					</p>
-
+				<div class="modal-header">
+					<h5 class="modal-title"><i class="fas fa-cloud-upload-alt mr-2"></i> Submitting items…</h5>
 				</div>
 
 				<div class="modal-body">
@@ -45,22 +43,20 @@
 						Files Submitted <span class="badge badge-light" id="files_submitted">1 / 1</span>
 					</span>
 
-					<button class="btn btn-lg btn-warning" style="margin: auto;" id="loading_button">
+					<button class="btn btn-lg btn-warning mt-2" id="loading_button">
 						<i class="fas fa-sync-alt fa-spin"></i>
-						&nbsp;&nbsp;&nbsp;&nbsp;Loading&nbsp;.&nbsp;.&nbsp;.
+						&nbsp;&nbsp;Loading…
 					</button>
 
-					<br></br>
-
-					<div class="card border-danger" id="panel_error" hidden>
-						<div class="card-header bg-danger text-white">ERROR</div>
+					<div class="card border-danger mt-3" id="panel_error" hidden>
+						<div class="card-header bg-danger text-white">Error</div>
 						<div class="card-body">
 							<p id="error_message">error</p>
 						</div>
 					</div>
 
-					<div class="list-group" id="submit_pastes" hidden>
-						<li class="list-group-item bg-dark text-white">Submitted Items</li>
+					<div class="list-group mt-3" id="submit_pastes" hidden>
+						<li class="list-group-item bg-light font-weight-bold">Submitted Items</li>
 					</div>
 
 				</div>
@@ -69,18 +65,16 @@
 					<a class="btn btn-light text-secondary"
 						href="{{ url_for('tags_ui.get_obj_by_tags') }}?object_type=item&ltags=infoleak:submission=&quot;manual&quot;"
 						target="_blank" id="submit_result" hidden>
-						<i class="fas fa-paper-plane fa-2x"></i>
-						<span class="label-icon">Submitted Items </span>
+						<i class="fas fa-paper-plane"></i>
+						<span>View submitted items</span>
 					</a>
-					<button class="btn btn-success btn-tags ml-auto" data-dismiss="modal" id="success_submit_button"
-						hidden>
-						<span class="label-icon">Success </span>
-						<i class="fas fa-check"></i>
+					<button class="btn btn-success ml-auto" data-dismiss="modal" id="success_submit_button" hidden>
+						<span>Success</span>
+						<i class="fas fa-check ml-1"></i>
 					</button>
-					<button class="btn btn-danger btn-tags ml-auto" data-dismiss="modal" id="error_submit_button"
-						hidden>
-						<span class="label-icon">ERROR </span>
-						<i class="fas fa-times"></i>
+					<button class="btn btn-danger ml-auto" data-dismiss="modal" id="error_submit_button" hidden>
+						<span>Error</span>
+						<i class="fas fa-times ml-1"></i>
 					</button>
 
 				</div>
@@ -90,17 +84,36 @@
 	{% endif %}
 
 
+	{% set page_title = 'Submit intelligence' %}
+	{% set page_eyebrow = 'Collection' %}
 	{% include 'nav_bar.html' %}
 
-	<div class="container-fluid">
+  <div class="ail-main">
+	<div class="ail-content">
+
+		<header class="ail-page-header">
+			<div>
+				<div class="eyebrow"><i class="fas fa-cloud-upload-alt"></i> {{ page_eyebrow }}</div>
+				<h1>Submit intelligence</h1>
+				<p>Ingest a file or paste raw text into the Black Pearl pipeline. Add taxonomies and galaxies before submitting to enrich downstream analysis.</p>
+			</div>
+			<div class="actions">
+				<a class="btn btn-sm btn-outline-secondary" href="{{ url_for('dashboard.index') }}">
+					<i class="fas fa-arrow-left mr-1"></i> Back to overview
+				</a>
+			</div>
+		</header>
+
 		<div class="row">
 
-			{% include 'item_submit/menu_sidebar.html' %}
+			<div class="col-12 col-lg-3 d-none d-lg-block">
+				{% include 'item_submit/menu_sidebar.html' %}
+			</div>
 
-			<div class="col-12 col-lg-10" id="core_content">
+			<div class="col-12 col-lg-9" id="core_content">
 
 				{% if message %}
-					<p>{{ message }}</p>
+					<div class="alert alert-info">{{ message }}</div>
 				{% endif %}
 
 				<form action="{{ url_for('PasteSubmit.submit') }}" id="pasteSubmitForm" method="post"
@@ -109,119 +122,156 @@
 					<input type="hidden" id="tags_taxonomies" name="tags_taxonomies" value="test">
 					<input type="hidden" id="tags_galaxies" name="tags_galaxies" value="test">
 
+					<div class="ail-card mb-3">
+						<header class="ail-card-head">
+							<span><i class="fas fa-filter mr-2 text-primary"></i> Submission mode</span>
+							<span class="ail-pill is-info">
+								<span class="dot"></span>
+								<span>Choose ingestion type</span>
+							</span>
+						</header>
+						<div class="ail-card-body">
 
-					<div class="card mt-2 mb-4">
-						<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-							<h6 class="m-0 font-weight-bold text-primary">Submit Item</h6>
-						</div>
-						<div class="card-body">
-
-							<div class="row mb-3">
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" id="radioimportfile" name="radioimport"
-										value="file" checked />
-									<label class="form-check-label" for="radioimportfile"> Submit a file </label>
+							<div class="row">
+								<div class="col-md-6">
+									<label class="ail-submit-mode" for="radioimportfile">
+										<input class="form-check-input" type="radio" id="radioimportfile" name="radioimport" value="file" checked>
+										<div class="ail-submit-mode-card">
+											<div class="ail-submit-mode-icon"><i class="fas fa-file-upload"></i></div>
+											<div>
+												<div class="title">File ingestion</div>
+												<div class="desc">Upload one or more files for automated triage and extraction.</div>
+												<div class="meta">Allowed: {{ allowed_extensions }} · up to {{ file_max_size }} GB</div>
+											</div>
+										</div>
+									</label>
 								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" type="radio" id="radioimporttext"
-										name="radioimport" value="text" />
-									<label class="form-check-label" for="radioimporttext"> Submit a text </label>
+								<div class="col-md-6 mt-3 mt-md-0">
+									<label class="ail-submit-mode" for="radioimporttext">
+										<input class="form-check-input" type="radio" id="radioimporttext" name="radioimport" value="text">
+										<div class="ail-submit-mode-card">
+											<div class="ail-submit-mode-icon"><i class="fas fa-keyboard"></i></div>
+											<div>
+												<div class="title">Text ingestion</div>
+												<div class="desc">Paste raw text, transcripts or notes into the pipeline.</div>
+												<div class="meta">Max size: {{ text_max_size }} MB</div>
+											</div>
+										</div>
+									</label>
 								</div>
 							</div>
 
-							<label for="ltags">Optional Tags:</label>
-							<div class="row mb-3">
-								<div class="col">
-									<div class="input-group">
-										<input id="ltags" type="text" class="form-control" autocomplete="off">
-									</div>
+						</div>
+					</div>
 
-									<div class="dropdown">
-										<button type="button" class="btn btn-info dropdown-toggle mt-1 mb-3"
-											data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-											id="dropdown-taxonomie">
-											Taxonomie Selected
-										</button>
-										<div class="dropdown-menu dropdown-menu-right"
-											aria-labelledby="dropdown-taxonomie">
-											<!-- TODO: make dropdown-scrollable -->
-											<h6 class="dropdown-header">Taxonomie Tags</h6>
-											<button class="dropdown-item" type="button" id="all-tags-taxonomies">All
-												Tags <i class="fas fa-tags"></i></button>
-											<div class="dropdown-divider"></div>
-											{% for taxo in active_taxonomies %}
-												<button class="dropdown-item" type="button"
-													id="{{ taxo }}-id{{ loop.index0 }}">{{ taxo }}</button>
-											{% endfor %}
+					<div class="ail-card mb-3">
+						<header class="ail-card-head">
+							<span><i class="fas fa-tags mr-2 text-primary"></i> Tagging</span>
+							<span class="ail-pill is-muted">Optional</span>
+						</header>
+						<div class="ail-card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<label for="ltags" class="d-block mb-2 small font-weight-bold">Taxonomies</label>
+									<input id="ltags" type="text" class="form-control" autocomplete="off" placeholder="Type a taxonomy tag…">
+									<div class="mt-2">
+										<div class="dropdown">
+											<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
+												data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+												id="dropdown-taxonomie">
+												Taxonomy selected
+											</button>
+											<div class="dropdown-menu" aria-labelledby="dropdown-taxonomie">
+												<h6 class="dropdown-header">Taxonomy tags</h6>
+												<button class="dropdown-item" type="button" id="all-tags-taxonomies">All tags <i class="fas fa-tags"></i></button>
+												<div class="dropdown-divider"></div>
+												{% for taxo in active_taxonomies %}
+													<button class="dropdown-item" type="button"
+														id="{{ taxo }}-id{{ loop.index0 }}">{{ taxo }}</button>
+												{% endfor %}
+											</div>
 										</div>
 									</div>
 								</div>
-								<div class="col">
-									<div class="input-group">
-										<input id="ltagsgalaxies" type="text" class="form-control" autocomplete="off">
-									</div>
-									<div class="dropdown">
-										<button type="button" class="btn btn-info dropdown-toggle mt-1 mb-3"
-											data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-											id="dropdown-galaxy">
-											Galaxy Selected
-										</button>
-										<div class="dropdown-menu dropdown-menu-right"
-											aria-labelledby="dropdown-galaxy">
-											<!-- TODO: make dropdown-scrollable -->
-											<h6 class="dropdown-header">Galaxy Tags</h6>
-											<button class="dropdown-item" type="button" id="all-tags-galaxies">All Tags
-												<i class="fas fa-tags"></i></button>
-											<div class="dropdown-divider"></div>
-											{% for galaxy in active_galaxies %}
-												<button class="dropdown-item" type="button"
-													id="{{ galaxy }}-idgalax{{ loop.index0 }}">{{ galaxy }}</button>
-											{% endfor %}
+								<div class="col-md-6 mt-3 mt-md-0">
+									<label for="ltagsgalaxies" class="d-block mb-2 small font-weight-bold">Galaxies</label>
+									<input id="ltagsgalaxies" type="text" class="form-control" autocomplete="off" placeholder="Type a galaxy tag…">
+									<div class="mt-2">
+										<div class="dropdown">
+											<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
+												data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+												id="dropdown-galaxy">
+												Galaxy selected
+											</button>
+											<div class="dropdown-menu" aria-labelledby="dropdown-galaxy">
+												<h6 class="dropdown-header">Galaxy tags</h6>
+												<button class="dropdown-item" type="button" id="all-tags-galaxies">All tags <i class="fas fa-tags"></i></button>
+												<div class="dropdown-divider"></div>
+												{% for galaxy in active_galaxies %}
+													<button class="dropdown-item" type="button"
+														id="{{ galaxy }}-idgalax{{ loop.index0 }}">{{ galaxy }}</button>
+												{% endfor %}
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 
+					<div class="ail-card mb-3" id="cardimportfile">
+						<header class="ail-card-head">
+							<span><i class="fas fa-file-upload mr-2 text-primary"></i> File ingestion</span>
+						</header>
+						<div class="ail-card-body">
 
-						<!-- Card Import File -->
-						<div class="input-group mt-2 mb-2" id="cardimportfile">
-							<div class="card-body">
-								<div class="form-group">
-									<label for="file">Submit a file, format allowed: {{allowed_extensions}}, max size
-										{{file_max_size}} Gb</label>
-									<input type="file" class="form-control-file" id="file" name="file">
-								</div>
-								<!-- TODO reactivate while zipped format are enabled -->
-								<div class="form-group d-none">
-									<label for="paste_name">Archive Password</label>
-									<input type="text" class="form-control" id="archive_pass" name="archive_pass"
-										placeholder="Optional">
-								</div>
+							<div class="ail-dropzone" id="ail-dropzone">
+								<i class="fas fa-cloud-upload-alt"></i>
+								<div class="dz-title">Drag &amp; drop a file here</div>
+								<div class="dz-sub">or pick a file using the input below</div>
 							</div>
-						</div>
 
-						<!-- Card Import Text -->
-						<div class="input-group mb-4 mb-2" id="cardimporttext">
-							<div class="card-body">
-								<div class="form-group">
-									<label for="paste_source">Submit a text, max size {{text_max_size}} Mb</label>
-									<input id="paste_source" type="text" name="paste_source"
-										class="form-control bg-light border-0 small" placeholder="Source"
-										aria-label="Source" aria-describedby="basic-addon2">
-								</div>
-								<div class="form-group mt-3">
-									<textarea class="form-control" id="paste_content" name="paste_content"
-										rows="20"></textarea>
-								</div>
+							<div class="form-group mt-3 mb-0">
+								<label for="file" class="small font-weight-bold">Choose file</label>
+								<input type="file" class="form-control-file" id="file" name="file">
+								<small class="form-text text-muted">Allowed formats: {{ allowed_extensions }} · Max size: {{ file_max_size }} GB</small>
 							</div>
-						</div>
 
-						<div class="form-group">
-							<button class="btn btn-primary btn-lg btn-block" name="submit" type="submit">Submit
-								Item</button>
-						</div>
+							<div class="form-group d-none mt-3">
+								<label for="paste_name">Archive password</label>
+								<input type="text" class="form-control" id="archive_pass" name="archive_pass" placeholder="Optional">
+							</div>
 
+						</div>
+					</div>
+
+					<div class="ail-card mb-3" id="cardimporttext" style="display:none;">
+						<header class="ail-card-head">
+							<span><i class="fas fa-keyboard mr-2 text-primary"></i> Text ingestion</span>
+						</header>
+						<div class="ail-card-body">
+
+							<div class="form-group">
+								<label for="paste_source" class="small font-weight-bold">Source</label>
+								<input id="paste_source" type="text" name="paste_source"
+									class="form-control" placeholder="e.g. pastebin.com/raw/xxxxx"
+									aria-label="Source">
+							</div>
+
+							<div class="form-group mt-3 mb-0">
+								<label for="paste_content" class="small font-weight-bold">Content</label>
+								<textarea class="form-control" id="paste_content" name="paste_content"
+									rows="16" placeholder="Paste raw text or transcript…"></textarea>
+								<small class="form-text text-muted">Max size: {{ text_max_size }} MB</small>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="d-flex justify-content-end mb-4">
+						<button class="btn btn-primary btn-lg" name="submit" type="submit">
+							<i class="fas fa-paper-plane mr-1"></i> Submit item
+						</button>
 					</div>
 
 				</form>
@@ -229,12 +279,75 @@
 			</div>
 
 		</div>
+
 	</div>
+  </div>
 
 
-</body>
+<style>
+.ail-submit-mode { cursor: pointer; }
+.ail-submit-mode input[type="radio"] {
+  position: absolute; opacity: 0; pointer-events: none;
+}
+.ail-submit-mode-card {
+  display: flex; align-items: flex-start; gap: .85rem;
+  padding: 1rem;
+  background: var(--ail-surface);
+  border: 1px solid var(--ail-line);
+  border-radius: var(--ail-radius);
+  transition: border-color .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.ail-submit-mode input[type="radio"]:checked + .ail-submit-mode-card {
+  border-color: var(--ail-primary);
+  background: var(--ail-primary-soft);
+  box-shadow: 0 0 0 2px var(--ail-focus);
+}
+.ail-submit-mode-card .ail-submit-mode-icon {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: var(--ail-surface-2);
+  color: var(--ail-primary);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.ail-submit-mode-card .title {
+  font-weight: 600; color: var(--ail-ink); margin-bottom: .15rem;
+}
+.ail-submit-mode-card .desc {
+  font-size: .82rem; color: var(--ail-muted); margin-bottom: .35rem;
+}
+.ail-submit-mode-card .meta {
+  font-family: var(--ail-mono);
+  font-size: .7rem; color: var(--ail-muted-2);
+}
+.ail-dropzone {
+  border: 1.5px dashed var(--ail-line-strong);
+  border-radius: var(--ail-radius);
+  background: var(--ail-surface-2);
+  padding: 1.6rem 1rem;
+  text-align: center;
+  color: var(--ail-muted);
+  transition: border-color .12s ease, background-color .12s ease;
+}
+.ail-dropzone.is-dragover,
+.ail-dropzone:hover {
+  border-color: var(--ail-primary);
+  background: var(--ail-primary-soft);
+  color: var(--ail-primary);
+}
+.ail-dropzone i {
+  font-size: 1.7rem; color: var(--ail-primary);
+  display: block; margin-bottom: .35rem;
+}
+.ail-dropzone .dz-title {
+  font-weight: 600; color: var(--ail-ink);
+}
+.ail-dropzone .dz-sub {
+  font-size: .78rem; color: var(--ail-muted); margin-top: .15rem;
+}
+</style>
 
-<!-- Toggle import div related to radio button selected -->
 <script>
 	$(document).ready(function () {
 		$("#cardimporttext").hide();
@@ -246,6 +359,29 @@
 			var targetBox = $("#cardimport" + inputValue);
 			$(targetBox).show();
 		});
+
+		// Drag & drop file onto the dropzone
+		var dz = document.getElementById('ail-dropzone');
+		if (dz) {
+			['dragenter', 'dragover'].forEach(function (ev) {
+				dz.addEventListener(ev, function (e) {
+					e.preventDefault(); e.stopPropagation();
+					dz.classList.add('is-dragover');
+				});
+			});
+			['dragleave', 'drop'].forEach(function (ev) {
+				dz.addEventListener(ev, function (e) {
+					e.preventDefault(); e.stopPropagation();
+					dz.classList.remove('is-dragover');
+				});
+			});
+			dz.addEventListener('drop', function (e) {
+				var files = e.dataTransfer && e.dataTransfer.files;
+				if (files && files.length) {
+					document.getElementById('file').files = files;
+				}
+			});
+		}
 	});
 </script>
 
@@ -258,7 +394,6 @@
 
 		$.getJSON("{{ url_for('tags_ui.get_all_taxonomies_customs_tags') }}",
 			function (data) {
-
 				ltags = $('#ltags').tagSuggest({
 					data: data,
 					maxDropHeight: 200,
@@ -269,7 +404,6 @@
 
 		$.getJSON("{{ url_for('tags_ui.tag_galaxies_tags_enabled_json') }}",
 			function (data) {
-
 				ltagsgalaxies = $('#ltagsgalaxies').tagSuggest({
 					data: data,
 					maxDropHeight: 200,
@@ -305,13 +439,11 @@
 
 <script>
 	jQuery("#all-tags-taxonomies").on("click", function (e) {
-		//change input tags list
 		$.getJSON("{{ url_for('tags_ui.get_all_taxonomies_customs_tags') }}",
 			function (data) {
 				ltags.setData(data)
 			});
 	});
-
 </script>
 <script>
 	jQuery("#all-tags-galaxies").on("click", function (e) {
@@ -371,7 +503,6 @@
 
 					document.getElementById('files_submitted').innerHTML = in_progress;
 
-					//error handler
 					if (isError) {
 						document.getElementById('error_message').innerHTML = error;
 						$("#panel_error").prop('hidden', false);
@@ -379,7 +510,6 @@
 						err = err + 1;
 					}
 
-					// Wait for sometime before running this script again
 					if (err < 100) {
 						setTimeout("makeProgress()", 100);
 					}
@@ -392,7 +522,6 @@
 						document.getElementById('error_message').innerHTML = error;
 						$("#panel_error").prop('hidden', false);
 						$("#error_submit_button").prop('hidden', false);
-
 					} else {
 						$("#success_submit_button").prop('hidden', false);
 					}
@@ -406,17 +535,12 @@
 						$("#submit_pastes").append(link);
 						$("#submit_pastes").prop('hidden', false);
 					}
-
-
 				}
-
 			}
-
 		);
-
 	}
 	makeProgress();
 </script>
 
-
+</body>
 </html>

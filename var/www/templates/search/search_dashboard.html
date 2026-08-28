@@ -2,11 +2,12 @@
 <html>
 
 <head>
-  <title>Search</title>
+  <title>Search · AIL Framework</title>
 	<link rel="icon" href="{{ url_for('static', filename='image/ail-icon.png') }}">
 
   <!-- Core CSS -->
 	<link href="{{ url_for('static', filename='css/bootstrap4.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/modern-ui.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     {% include 'objects/block_obj_css.html' %}
@@ -18,73 +19,142 @@
 	<script src="{{ url_for('static', filename='js/jquery.dataTables.min.js')}}"></script>
 	<script src="{{ url_for('static', filename='js/dataTables.bootstrap.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/helper.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/ail-shell.js')}}"></script>
 
     <style>
     .scope-icon {
-      width: 20px;
-      height: 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      width: 18px; height: 18px;
+      display: inline-flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-
-    .scope-icon img {
-      max-width: 16px;
-      max-height: 16px;
-      display: block;
-    }
-
-    .scope-icon i {
-      font-size: 16px;
-      line-height: 1;
-    }
-    .scope-icon img,
-    .scope-icon i {
-      opacity: 0.75;
-    }
-
-    label:hover .scope-icon img,
-    label:hover .scope-icon i {
-      opacity: 1;
-    }
+    .scope-icon img { max-width: 16px; max-height: 16px; display: block; }
+    .scope-icon i { font-size: 14px; line-height: 1; color: var(--ail-muted); }
+    .scope-icon svg { color: var(--ail-muted); }
+    .custom-control-label:hover .scope-icon i,
+    .custom-control-label:hover .scope-icon svg { color: var(--ail-accent); }
+    .ail-search-sidebar .custom-control-label { display: flex; align-items: center; }
+    .ail-search-sidebar .custom-control { padding-left: 1.5rem; }
     </style>
 
 </head>
 <body>
 
+	{% set page_title = 'Search Intelligence' %}
+	{% set page_eyebrow = 'Search' %}
 	{% include 'nav_bar.html' %}
 
+  <div class="ail-main">
+	<form method="GET" action="{{ url_for('search_b.search_dashboard') }}" id="searchForm" onsubmit="combineScopes()">
 
-<form method="GET" action="{{ url_for('search_b.search_dashboard') }}" id="searchForm", onsubmit="combineScopes()">
+    <main class="ail-content">
+      <header class="ail-page-header">
+        <div>
+          <div class="eyebrow"><i class="fas fa-search"></i> {{ page_eyebrow }}</div>
+          <h1>Unified intelligence search</h1>
+          <p>Pivot across crawled content, chats, forums, titles, filenames and AI-generated descriptions.</p>
+        </div>
+        <div class="actions">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('search_b.search_advanced') }}">
+            <i class="fas fa-sliders-h mr-1"></i> Advanced search
+          </a>
+        </div>
+      </header>
 
-  <div class="container-fluid">
-    <div class="row">
-
-      <!-- =======================
-           SIDEBAR (filters only)
-           ======================= -->
-      <aside class="col-md-3 col-xl-2 border-right bg-light py-3"
-             style="min-height: 100vh; position: sticky; top: 0;">
-
-        <h6 class="text-uppercase text-muted mb-3">Search scope</h6>
-
-        <div class="mb-2">
-          <a href="#" class="small" onclick="setAllScopes(true); return false;">All</a>
-          <span class="text-muted mx-1">·</span>
-          <a href="#" class="small" onclick="setAllScopes(false); return false;">None</a>
+      {# Big search bar #}
+      <div class="ail-search-bar">
+        <div class="input-group input-group-lg">
+          <input type="text"
+                 class="form-control"
+                 name="q"
+                 value="{{ request.args.get('q','') }}"
+                 placeholder="Search chats, domains, titles, filenames, AI descriptions…"
+                 autofocus>
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
         </div>
 
-        <!-- CHATS -->
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <strong class="small text-uppercase text-muted"><i class="far fa-comments"></i> Chats</strong>
-            <div>
-              <a href="#" class="small" onclick="toggleGroup('chats', true); return false;">All</a>
-              <span class="text-muted mx-1">·</span>
-              <a href="#" class="small" onclick="toggleGroup('chats', false); return false;">None</a>
+        <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap">
+          <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons" role="group" aria-label="Sort order">
+            <label class="btn btn-outline-secondary {% if sort == 'recent' or not sort %}active{% endif %}">
+              <input type="radio" name="sort" value="recent" autocomplete="off"
+                     {% if sort == 'recent' or not sort %}checked{% endif %}>
+              <i class="fas fa-clock mr-1"></i> Most recent
+            </label>
+            <label class="btn btn-outline-secondary {% if sort == 'best' %}active{% endif %}">
+              <input type="radio" name="sort" value="best" autocomplete="off"
+                     {% if sort == 'best' %}checked{% endif %}>
+              <i class="fas fa-star mr-1"></i> Best match
+            </label>
+          </div>
+
+          <a class="btn btn-sm btn-link p-0"
+             data-toggle="collapse"
+             href="#moreFilters"
+             role="button"
+             aria-controls="moreFilters">
+            More filters <i class="fas fa-chevron-down ml-1"></i>
+          </a>
+        </div>
+
+        <div class="collapse mt-2 {% if request.args.get('from') or request.args.get('to') %}show{% endif %}" id="moreFilters">
+          <div class="row align-items-end mt-2">
+            <div class="col-md-4">
+              <label class="small text-muted mb-1" for="last_seen_from">First seen (from)</label>
+              <input type="date" class="form-control"
+                     id="last_seen_from"
+                     name="from"
+                     value="{{ request.args.get('from','') }}">
+            </div>
+            <div class="col-md-4">
+              <label class="small text-muted mb-1" for="last_seen_to">Last seen (to)</label>
+              <input type="date" class="form-control"
+                     id="last_seen_to"
+                     name="to"
+                     value="{{ request.args.get('to','') }}">
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input"
+                       id="use_last_seen"
+                       name="use_last_seen" value="1"
+                       {% if request.args.get('use_last_seen') %}checked{% endif %}>
+                <label class="form-check-label small text-muted" for="use_last_seen">Restrict to first/last seen range</label>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <input type="hidden" name="scopes" id="scopes">
+      <input type="hidden" name="forums" id="forums">
+      <input type="hidden" name="forum_types" id="forum_types">
+
+      {# Two-column: filters | results #}
+      <div class="ail-search-layout mt-3">
+
+        <aside class="ail-search-sidebar">
+
+          <h6>
+            <span>Search scope</span>
+            <span class="group-controls">
+              <a href="#" onclick="setAllScopes(true); return false;">All</a>
+              <span class="text-muted mx-1">·</span>
+              <a href="#" onclick="setAllScopes(false); return false;">None</a>
+            </span>
+          </h6>
+
+          {# CHATS #}
+          <h6>
+            <span><i class="far fa-comments mr-1"></i> Chats</span>
+            <span class="group-controls">
+              <a href="#" onclick="toggleGroup('chats', true); return false;">All</a>
+              <span class="text-muted mx-1">·</span>
+              <a href="#" onclick="toggleGroup('chats', false); return false;">None</a>
+            </span>
+          </h6>
 
           {% for protocol in chat_protocols %}
             {% set scope_value = "c" + protocol["id"] %}
@@ -106,30 +176,25 @@
               </label>
             </div>
           {% endfor %}
-        </div>
 
-        <hr>
+          <hr>
 
-        <!-- CRAWLED DOMAINS -->
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <strong class="small text-uppercase text-muted"><i class="fas fa-spider"></i> Crawled domains</strong>
-            <div>
-              <a href="#" class="small" onclick="toggleGroup('domains', true); return false;">All</a>
+          {# CRAWLED DOMAINS #}
+          <h6>
+            <span><i class="fas fa-spider mr-1"></i> Crawled domains</span>
+            <span class="group-controls">
+              <a href="#" onclick="toggleGroup('domains', true); return false;">All</a>
               <span class="text-muted mx-1">·</span>
-              <a href="#" class="small" onclick="toggleGroup('domains', false); return false;">None</a>
-            </div>
-          </div>
+              <a href="#" onclick="toggleGroup('domains', false); return false;">None</a>
+            </span>
+          </h6>
 
           <div class="custom-control custom-checkbox">
             <input class="custom-control-input scope-item domains" type="checkbox" id="scope_web"
                    name="scope" value="web"
                    {% if "web" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_web">
-                <span class="scope-icon mr-2">
-                  <i class="fab fa-html5"></i>
-                </span>
-
+                <span class="scope-icon mr-2"><i class="fab fa-html5"></i></span>
                 Web (clearnet)
             </label>
           </div>
@@ -139,10 +204,7 @@
                    name="scope" value="onion"
                    {% if "onion" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_onion">
-                <span class="scope-icon mr-2">
-                    <i class="fas fa-user-secret"></i>
-                </span>
-
+                <span class="scope-icon mr-2"><i class="fas fa-user-secret"></i></span>
                 Tor (.onion)
             </label>
           </div>
@@ -152,32 +214,22 @@
                    name="scope" value="i2p"
                    {% if "i2p" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_i2p">
-                <span class="scope-icon mr-2">
-                    <i class="fas fa-user-secret"></i>
-                </span>
-
+                <span class="scope-icon mr-2"><i class="fas fa-user-secret"></i></span>
                 I2P
             </label>
           </div>
-        </div>
 
+          <hr>
 
-        <hr>
-
-        <!-- FORUMS -->
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <strong class="small text-uppercase text-muted">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path fill="currentColor" d="M17 12V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14l4-4h10a1 1 0 0 0 1-1m4-6h-2v9H6v2a1 1 0 0 0 1 1h11l4 4V7a1 1 0 0 0-1-1" />
-                    </svg> Forums</strong>
-            <div>
-              <a href="#" class="small" onclick="toggleForumFilters(true); return false;">All</a>
+          {# FORUMS #}
+          <h6>
+            <span><i class="far fa-comments mr-1"></i> Forums</span>
+            <span class="group-controls">
+              <a href="#" onclick="toggleForumFilters(true); return false;">All</a>
               <span class="text-muted mx-1">·</span>
-              <a href="#" class="small" onclick="toggleForumFilters(false); return false;">None</a>
-            </div>
-          </div>
+              <a href="#" onclick="toggleForumFilters(false); return false;">None</a>
+            </span>
+          </h6>
 
           <div class="custom-control custom-checkbox">
             <input class="custom-control-input scope-item" type="checkbox" id="scope_forum"
@@ -185,7 +237,7 @@
                    {% if "forum" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_forum">
                 <span class="scope-icon mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
                         <path d="M0 0h24v24H0z" fill="none" />
                         <path fill="currentColor" d="M17 12V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14l4-4h10a1 1 0 0 0 1-1m4-6h-2v9H6v2a1 1 0 0 0 1 1h11l4 4V7a1 1 0 0 0-1-1" />
                     </svg>
@@ -200,23 +252,29 @@
               <input class="custom-control-input forum-type-item forum_types" type="checkbox" id="forum_type_post"
                      name="forum_type" value="post"
                      {% if not selected_forum_types or 'post' in selected_forum_types %}checked{% endif %}>
-              <label class="custom-control-label d-flex align-items-center" for="forum_type_post"><span class="scope-icon mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+              <label class="custom-control-label d-flex align-items-center" for="forum_type_post">
+                <span class="scope-icon mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
                     <path d="M0 0h24v24H0z" fill="none" />
                     <path fill="currentColor" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2M6 9h12v2H6m8 3H6v-2h8m4-4H6V6h12" />
                   </svg>
-              </span> Posts</label>
+                </span>
+                Posts
+              </label>
             </div>
             <div class="custom-control custom-checkbox">
               <input class="custom-control-input forum-type-item forum_types" type="checkbox" id="forum_type_thread"
                      name="forum_type" value="forum-thread"
                      {% if not selected_forum_types or 'forum-thread' in selected_forum_types %}checked{% endif %}>
-              <label class="custom-control-label d-flex align-items-center" for="forum_type_thread"><span class="scope-icon mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+              <label class="custom-control-label d-flex align-items-center" for="forum_type_thread">
+                <span class="scope-icon mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
                     <path d="M0 0h24v24H0z" fill="none" />
                     <path fill="currentColor" d="M2 16.59L5.59 13H15a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM2 18H1V6a3 3 0 0 1 3-3h11a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H6zm19 2.59V10a2 2 0 0 0-2-2V7a3 3 0 0 1 3 3v12h-1l-4-4H8c-1.24 0-2.3-.75-2.76-1.82l.8-.8C6.21 16.3 7 17 8 17h9.41z" />
                   </svg>
-              </span> Threads</label>
+                </span>
+                Threads
+              </label>
             </div>
           </div>
 
@@ -233,13 +291,11 @@
               <div class="text-muted small">No forums available.</div>
             {% endfor %}
           </div>
-        </div>
 
-        <hr>
+          <hr>
 
-        <!-- HTML TITLES -->
-        <div class="mb-3">
-          <strong class="small text-uppercase text-muted">Web pages</strong>
+          {# HTML TITLES #}
+          <h6><span><i class="fas fa-heading mr-1"></i> Web pages</span></h6>
 
           <div class="custom-control custom-checkbox">
             <input class="custom-control-input scope-item" type="checkbox" id="scope_html_titles"
@@ -247,56 +303,45 @@
                    {% if "title" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_html_titles">
                 <span class="scope-icon mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10.5 20V7H5V4h14v3h-5.5v13z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M10.5 20V7H5V4h14v3h-5.5v13z"/></svg>
                 </span>
-
                 Titles
             </label>
           </div>
-        </div>
 
-        <hr>
+          <hr>
 
-        <!-- FILENAMES -->
-        <div class="mb-3">
-          <strong class="small text-uppercase text-muted">Files</strong>
+          {# FILENAMES #}
+          <h6><span><i class="far fa-file mr-1"></i> Files</span></h6>
 
           <div class="custom-control custom-checkbox">
             <input class="custom-control-input scope-item" type="checkbox" id="scope_filenames"
                    name="scope" value="filename"
                    {% if "filename" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_filenames">
-                <span class="scope-icon mr-2">
-                    <i class="far fa-file"></i>
-                </span>
-
+                <span class="scope-icon mr-2"><i class="far fa-file"></i></span>
                 Filenames
             </label>
           </div>
-        </div>
 
-        <hr>
+          <hr>
 
-        <!-- AI DESCRIPTIONS -->
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <strong class="small text-uppercase text-muted">AI descriptions</strong>
-            <div>
-              <a href="#" class="small" onclick="toggleGroup('ai_description', true); return false;">All</a>
+          {# AI DESCRIPTIONS #}
+          <h6>
+            <span><i class="fas fa-robot mr-1"></i> AI descriptions</span>
+            <span class="group-controls">
+              <a href="#" onclick="toggleGroup('ai_description', true); return false;">All</a>
               <span class="text-muted mx-1">·</span>
-              <a href="#" class="small" onclick="toggleGroup('ai_description', false); return false;">None</a>
-            </div>
-          </div>
+              <a href="#" onclick="toggleGroup('ai_description', false); return false;">None</a>
+            </span>
+          </h6>
 
           <div class="custom-control custom-checkbox">
             <input class="custom-control-input scope-item ai_description" type="checkbox" id="scope_ai_description_images"
                    name="scope" value="desc-img"
                    {% if "desc-img" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_ai_description_images">
-                <span class="scope-icon mr-2">
-                    <i class="far fa-image"></i>
-                </span>
-
+                <span class="scope-icon mr-2"><i class="far fa-image"></i></span>
                 Images
             </label>
           </div>
@@ -306,10 +351,7 @@
                    name="scope" value="desc-screen"
                    {% if "desc-screen" in selected_scopes %}checked{% endif %}>
             <label class="custom-control-label d-flex align-items-center" for="scope_ai_description_screenshots">
-                <span class="scope-icon mr-2">
-                    <i class="fas fa-image"></i>
-                </span>
-
+                <span class="scope-icon mr-2"><i class="fas fa-image"></i></span>
                 Screenshots
             </label>
           </div>
@@ -318,159 +360,42 @@
             <input class="custom-control-input scope-item ai_description" type="checkbox" id="scope_ai_description_domains"
                    name="scope" value="desc-dom"
                    {% if "desc-dom" in selected_scopes %}checked{% endif %}>
-            <label class="custom-control-label" for="scope_ai_description_domains">Domains</label>
-          </div>
-        </div>
-
-        <div class="text-muted small mt-3">
-          Tip: If no scope is selected, treat it as “All”.
-        </div>
-
-      </aside>
-
-      <!-- =======================
-           SEARCH BAR
-           ======================= -->
-      <main class="col-md-9 col-xl-10 py-3">
-
-        <div class="row align-items-center mt-2">
-          <div class="col">
-            <div class="input-group input-group-lg">
-              <input type="text"
-                     class="form-control"
-                     name="q"
-                     value="{{ request.args.get('q','') }}"
-                     placeholder="Search chats, domains, titles, filenames…">
-
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">
-                  <i class="fas fa-search"></i> Search
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <span class="col-auto text-center mt-1">
-            <i class="fa-solid fa-circle-info fa-2x"
-               style="color: #c0bfbc; cursor: help;"
-               onmouseenter="show_search_helper_tooltip(this)"
-               onmouseleave="hide_obj_tooltip(this)">
-            </i>
-          </span>
-        </div>
-
-        <div class="d-flex align-items-center justify-content-between my-2 flex-wrap">
-
-          <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons" role="group" aria-label="Sort order">
-            <label class="btn btn-outline-secondary {% if sort == 'recent' %}active{% endif %}">
-              <input type="radio" name="sort" value="recent" autocomplete="off"
-                     {% if sort == 'recent' or not sort %}checked{% endif %}>
-              Most recent
-            </label>
-
-            <label class="btn btn-outline-secondary {% if sort == 'best' %}active{% endif %}">
-              <input type="radio" name="sort" value="best" autocomplete="off"
-                     {% if sort == 'best' %}checked{% endif %}>
-              Best match
+            <label class="custom-control-label" for="scope_ai_description_domains">
+                <span class="scope-icon mr-2"></span>
+                Domains
             </label>
           </div>
 
-          <!-- MORE FILTERS -->
-          <div class="mt-2 mt-sm-0 d-flex align-items-center">
-            <a class="btn btn-sm btn-link p-0 mr-3"
-               data-toggle="collapse"
-               href="#moreFilters"
-               role="button"
-               aria-controls="moreFilters">
-              More filters <i class="fa-solid fa-chevron-down ml-1"></i>
-            </a>
-
-            <a class="btn btn-sm btn-outline-primary"
-               href="{{ url_for('search_b.search_advanced') }}">
-              <i class="fa-solid fa-sliders mr-1"></i>
-              Advanced search
-              <span class="text-dark">
-                <i class="fas fa-envelope"></i>
-                <i class="fa-solid fa-at"></i>
-                <i class="fas fa-user"></i>
-              </span>
-              <img src="/static/image/passivessh.png" alt="Passive SSH" style="width:25px;">
-            </a>
+          <div class="text-muted small mt-3">
+            Tip: If no scope is selected, treat it as “All”.
           </div>
 
-        </div>
+        </aside>
 
-        <div class="collapse mt-2 {% if request.args.get('from') or request.args.get('to') %}show{% endif %}" id="moreFilters">
-          <div class="card card-body">
-
-            <div class="form-row align-items-end">
-              <div class="col-md-4">
-                <label class="small text-muted mb-1" for="last_seen_from">First seen (from)</label>
-                <input type="date" class="form-control"
-                       id="last_seen_from"
-                       name="from"
-                       value="{{ request.args.get('from','') }}">
-              </div>
-
-              <div class="col-md-4">
-                <label class="small text-muted mb-1" for="last_seen_to">Last seen (to)</label>
-                <input type="date" class="form-control"
-                       id="last_seen_to"
-                       name="to"
-                       value="{{ request.args.get('to','') }}">
-              </div>
-
-              <div class="col-md-4">
-                <div class="custom-control custom-checkbox mb-1">
-                  <input type="checkbox" class="custom-control-input"
-                         id="use_last_seen"
-                         name="use_last_seen" value="1"
-                         {% if request.args.get('use_last_seen') %}checked{% endif %}>
+        <section>
+          {% if search_error %}
+            <div class="alert alert-warning" role="alert">
+              <div class="d-flex align-items-start">
+                <div class="mr-3 mt-1"><i class="fas fa-exclamation-triangle fa-lg text-warning"></i></div>
+                <div>
+                  <h6 class="alert-heading mb-1">{{ search_error.title }}</h6>
+                  <p class="mb-0">{{ search_error.message }}</p>
                 </div>
-                <small class="text-muted">Off by default</small>
               </div>
             </div>
+          {% endif %}
 
-          </div>
-        </div>
-
-        <input type="hidden" name="scopes" id="scopes">
-        <input type="hidden" name="forums" id="forums">
-        <input type="hidden" name="forum_types" id="forum_types">
-
-</form>
-
-    {% if search_error %}
-        <div class="alert alert-warning border-left border-warning shadow-sm mt-3" role="alert">
-          <div class="d-flex align-items-start">
-            <div class="mr-3 mt-1">
-              <i class="fas fa-exclamation-triangle fa-lg text-warning"></i>
+          {% if selected_scopes %}
+            <div class="mb-3">
+              <span class="text-muted mr-2 small">Searching in:</span>
+              {% for s in selected_scopes %}
+                <span class="ail-pill is-muted mr-1 mb-1">{{ s }}</span>
+              {% endfor %}
+              <a class="small ml-2" href="{{ url_for('search_b.search_dashboard', q=request.args.get('q','')) }}">Reset</a>
             </div>
-            <div>
-              <h6 class="alert-heading mb-1">{{ search_error.title }}</h6>
-              <p class="mb-0">{{ search_error.message }}</p>
-            </div>
-          </div>
-        </div>
-    {% endif %}
+          {% endif %}
 
-{#        <small class="text-muted d-block mt-2">#}
-{#          Examples: <code>@username</code>, <code>example.onion</code>, <code>invoice.pdf</code>, <code>ransomware</code>#}
-{#        </small>#}
-
-        <!-- Optional: show selected scopes as chips -->
-        {% if selected_scopes %}
-          <div class="mt-3">
-            <span class="text-muted mr-2">Searching in:</span>
-            {% for s in selected_scopes %}
-              <span class="badge badge-secondary mr-1 mb-1">{{ s }}</span>
-            {% endfor %}
-            <a class="small ml-2" href="{{ url_for('search_b.search_dashboard', q=request.args.get('q','')) }}">Reset</a>
-          </div>
-        {% endif %}
-
-
-    {% if result %}
+          {% if result %}
             {% set endpoint_url = url_for('search_b.search_dashboard') + "?q=" + to_search + "&sort=" + sort %}
             {% if last_seen_from %}
                 {% set endpoint_url = endpoint_url + "&from=" + last_seen_from %}
@@ -492,57 +417,62 @@
                 {% include 'objects/image/block_blur_img_slider.html' %}
             </div>
 
-        <!-- RESULTS -->
-        {% for obj in result %}
-            {% if obj.type == 'message' %}
-                {% with message=obj %}
-                    {% include 'chats_explorer/block_message_search.html' %}
-                {% endwith %}
-            {% elif obj.type == 'image' or obj.type == 'screenshot' %}
-                {% include 'objects/image/block_img_description.html' %}
-            {% elif obj.type == 'domain' %}
-                {% include 'crawler/block_domain_description.html' %}
-{#                TODO MODIFY ME TO SHOW ALL DOMAINS  that matches "domains_items" #}
-            {% elif obj.type == 'item' %}
-                {% include 'objects/item/block_crawled_result.html' %}
-            {% elif obj.type == 'post' %}
-                {% include 'forums_explorer/block_forum_post_search_result.html' %}
-            {% elif obj.type == 'forum-thread' %}
-                {% include 'forums_explorer/block_forum_thread_search_result.html' %}
-            {% elif obj.type == 'title' %}
-                {% include 'objects/title/block_title.html' %}
-            {% elif obj.type == 'file-name' %}
-                {% include 'objects/file-name/block_file_name.html' %}
-            {% elif obj.type == 'user-account' %}
-                {% include 'chats_explorer/block_user_account.html' %}
-            {% elif obj.type == 'chat' %}
-                {% include 'chats_explorer/block_chat.html' %}
-            {% else %}
-                {{ obj }}
-            {% endif %}
-
-        {% endfor %}
+            {# Results #}
+            {% for obj in result %}
+                {% if obj.type == 'message' %}
+                    {% with message=obj %}
+                        {% include 'chats_explorer/block_message_search.html' %}
+                    {% endwith %}
+                {% elif obj.type == 'image' or obj.type == 'screenshot' %}
+                    {% include 'objects/image/block_img_description.html' %}
+                {% elif obj.type == 'domain' %}
+                    {% include 'crawler/block_domain_description.html' %}
+                {% elif obj.type == 'item' %}
+                    {% include 'objects/item/block_crawled_result.html' %}
+                {% elif obj.type == 'post' %}
+                    {% include 'forums_explorer/block_forum_post_search_result.html' %}
+                {% elif obj.type == 'forum-thread' %}
+                    {% include 'forums_explorer/block_forum_thread_search_result.html' %}
+                {% elif obj.type == 'title' %}
+                    {% include 'objects/title/block_title.html' %}
+                {% elif obj.type == 'file-name' %}
+                    {% include 'objects/file-name/block_file_name.html' %}
+                {% elif obj.type == 'user-account' %}
+                    {% include 'chats_explorer/block_user_account.html' %}
+                {% elif obj.type == 'chat' %}
+                    {% include 'chats_explorer/block_chat.html' %}
+                {% else %}
+                    {{ obj }}
+                {% endif %}
+            {% endfor %}
 
             {% include 'search/pagination.html' %}
 
-    {% elif request.args.get('q','') and request.args.get('scopes','') %}
-        <div class="text-muted d-block my-4">
-          No Results
-        </div>
-    {% endif %}
+          {% elif request.args.get('q','') and request.args.get('scopes','') %}
+            <div class="ail-empty">
+              <i class="fas fa-search"></i>
+              <div class="empty-title">No results</div>
+              Try fewer constraints or another scope.
+            </div>
+          {% else %}
+            <div class="ail-empty">
+              <i class="fas fa-search"></i>
+              <div class="empty-title">Start an intelligence query</div>
+              Enter a keyword, domain, hash, username or chat identifier. Use the left panel to restrict the scope.
+            </div>
+          {% endif %}
 
+        </section>
+      </div>
 
-      </main>
-
-    </div>
+    </main>
+	</form>
   </div>
-
 
 <script>
 $(document).ready(function(){
     $("#page-search").addClass("active");
 });
-
 
   function setAllScopes(on) {
     document.querySelectorAll('.scope-item').forEach(cb => cb.checked = on);
@@ -582,7 +512,6 @@ $(document).ready(function(){
     document.querySelectorAll('input[name="forum"]').forEach(i => i.disabled = true);
     document.querySelectorAll('input[name="forum_type"]').forEach(i => i.disabled = true);
 
-    // avoid empty last_seen_from / last_seen_to
     const last_seen_from = document.getElementById('last_seen_from');
     if (!last_seen_from.value) {
         last_seen_from.disabled = true;
@@ -591,19 +520,22 @@ $(document).ready(function(){
     if (!last_seen_to.value) {
         last_seen_to.disabled = true;
     }
-
   }
 
-
   $('#moreFilters').on('show.bs.collapse', function () {
-  $(this).prev().find('.fa-chevron-down')
-    .removeClass('fa-chevron-down')
-    .addClass('fa-chevron-up');
+    $(this).prev().find('.fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
   });
   $('#moreFilters').on('hide.bs.collapse', function () {
-    $(this).prev().find('.fa-chevron-up')
-      .removeClass('fa-chevron-up')
-      .addClass('fa-chevron-down');
+    $(this).prev().find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+  });
+
+  // Cmd/Ctrl + K focuses the search input
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      var el = document.querySelector('.ail-search-bar input[name="q"]');
+      if (el) el.focus();
+    }
   });
 
 </script>

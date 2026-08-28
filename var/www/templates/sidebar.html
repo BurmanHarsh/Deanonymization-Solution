@@ -1,0 +1,173 @@
+{# =====================================================================
+   AIL – Shared primary sidebar.
+   Included via nav_bar.html on every authenticated page.
+   Items map to existing AIL Flask routes (do not invent routes).
+   ===================================================================== #}
+{% set ep = request.endpoint or '' %}
+{% macro is_active(prefix) -%}
+  {%- if ep.startswith(prefix) %} active{% endif -%}
+{%- endmacro %}
+{% macro is_endpoint(name) -%}
+  {%- if ep == name %} active{% endif -%}
+{%- endmacro %}
+
+<aside id="ail-sidebar"
+       class="ail-sidebar-shell"
+       aria-label="AIL navigation"
+       data-collapsed="false"
+       data-open="false">
+  <div class="ail-sidebar-inner">
+
+    {# Brand + collapse toggle #}
+    <header class="ail-sidebar-brand">
+      <a class="ail-sidebar-logo" href="{{ url_for('dashboard.index') }}" aria-label="AIL — Threat Intelligence home">
+        <span class="ail-sidebar-logo-mark">
+          <img src="{{ url_for('static', filename='image/ail-icon.png') }}" alt="AIL">
+        </span>
+        <span class="ail-sidebar-logo-text">
+          <span class="ail-sidebar-logo-name">AIL</span>
+          <span class="ail-sidebar-logo-sub">Threat Intel</span>
+        </span>
+      </a>
+      <button type="button"
+              id="ail-sidebar-toggle"
+              class="ail-sidebar-toggle"
+              aria-label="Collapse sidebar"
+              aria-expanded="true"
+              aria-controls="ail-sidebar">
+        <i class="fas fa-angle-double-left" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <nav class="ail-sidebar-nav" aria-label="Primary">
+
+      {# ---------- OVERVIEW ---------- #}
+      <div class="ail-sidebar-group">
+        <h6 class="ail-sidebar-heading">Overview</h6>
+        <ul class="ail-sidebar-list" role="list">
+          <li>
+            <a href="{{ url_for('dashboard.index') }}"
+               class="ail-sidebar-link{{ is_endpoint('dashboard.index') }}"
+               data-label="Dashboard">
+              <i class="fas fa-th-large" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Dashboard</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# ---------- INTELLIGENCE ---------- #}
+      <div class="ail-sidebar-group">
+        <h6 class="ail-sidebar-heading">Intelligence</h6>
+        <ul class="ail-sidebar-list" role="list">
+          <li>
+            <a href="{{ url_for('search_b.search_dashboard') }}"
+               class="ail-sidebar-link{{ is_active('search_b.') }}"
+               data-label="Search">
+              <i class="fas fa-search" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Search</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('dashboard.objects_dashboard') }}"
+               class="ail-sidebar-link{{ is_active('dashboard.objects_dashboard') }}{{ is_active('objects_item.') }}"
+               data-label="Objects">
+              <i class="fas fa-cubes" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Objects</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('tags_ui.tags_search_items') }}"
+               class="ail-sidebar-link{{ is_active('tags_ui.') }}"
+               data-label="Tags">
+              <i class="fas fa-tags" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Tags</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# ---------- COLLECTION ---------- #}
+      <div class="ail-sidebar-group">
+        <h6 class="ail-sidebar-heading">Collection</h6>
+        <ul class="ail-sidebar-list" role="list">
+          <li>
+            <a href="{{ url_for('PasteSubmit.PasteSubmit_page') }}"
+               class="ail-sidebar-link{{ is_active('PasteSubmit.') }}{{ is_active('ui_submit.') }}{{ is_active('item_submit.') }}"
+               data-label="Submit">
+              <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Submit</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('crawler_splash.crawlers_dashboard') }}"
+               class="ail-sidebar-link{{ is_active('crawler_splash.') }}"
+               data-label="Crawlers">
+              <i class="fas fa-spider" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Crawlers</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# ---------- INVESTIGATION ---------- #}
+      <div class="ail-sidebar-group">
+        <h6 class="ail-sidebar-heading">Investigation</h6>
+        <ul class="ail-sidebar-list" role="list">
+          <li>
+            <a href="{{ url_for('hunters.trackers_dashboard') }}"
+               class="ail-sidebar-link{{ is_active('hunters.') }}"
+               data-label="Hunting">
+              <i class="fas fa-crosshairs" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Hunting</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('investigations_b.investigations_dashboard') }}"
+               class="ail-sidebar-link{{ is_active('investigations_b.') }}"
+               data-label="Investigations">
+              <i class="fas fa-microscope" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Investigations</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('forums_explorer.forum_explorer_forums') }}"
+               class="ail-sidebar-link{{ is_active('forums_explorer.') }}"
+               data-label="Forums">
+              <i class="fas fa-comments" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Forums</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# ---------- SYSTEM ---------- #}
+      <div class="ail-sidebar-group ail-sidebar-group--system">
+        <h6 class="ail-sidebar-heading">System</h6>
+        <ul class="ail-sidebar-list" role="list">
+          <li>
+            <a href="{{ url_for('settings_b.settings_page') }}"
+               class="ail-sidebar-link{{ is_active('settings_b.') }}{{ is_active('ail_2_ail_sync.') }}"
+               data-label="Settings">
+              <i class="fas fa-cog" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Settings</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('root.logout') }}"
+               class="ail-sidebar-link ail-sidebar-link--danger"
+               data-label="Log Out">
+              <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+              <span class="ail-sidebar-label">Log Out</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+
+  </div>
+</aside>
+
+{# Backdrop for the off-canvas mobile drawer #}
+<div id="ail-sidebar-backdrop" class="ail-sidebar-backdrop" hidden></div>

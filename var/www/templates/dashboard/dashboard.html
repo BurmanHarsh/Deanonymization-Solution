@@ -2,323 +2,313 @@
 <html>
 
 <head>
-  <title>AIL Framework</title>
-	<link rel="icon" href="{{ url_for('static', filename='image/ail-icon.png') }}">
+  <title>AIL Framework – Intelligence Overview</title>
+  <link rel="icon" href="{{ url_for('static', filename='image/ail-icon.png') }}">
 
   <!-- Core CSS -->
-	<link href="{{ url_for('static', filename='css/bootstrap4.min.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='css/modern-ui.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/bootstrap4.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/modern-ui.css') }}" rel="stylesheet">
 
   <!-- JS -->
-	<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/helper.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/popper.min.js')}}"></script>
-	<script src="{{ url_for('static', filename='js/echarts.min.js')}}"></script>
-	<script src="{{ url_for('static', filename='js/bootstrap4.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/helper.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/popper.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/echarts.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap4.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/ail-shell.js')}}"></script>
 
-    <style>
-        .popover {
-      max-width: none;
-      width: 500px;
-    }
-    .dashboard-main {
-      padding-top: 0.25rem;
-      color: #1f2937;
-    }
-    .dashboard-heading {
-      color: #111827;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      margin-bottom: 1rem;
-    }
-    .search-panel {
-      background: #f8fafc;
-      border: 1px solid #dbe4ef;
-      border-radius: 0.75rem;
-      padding: 0.85rem;
-      margin: 0.35rem 0 0.8rem;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    }
-    .dashboard-main .form-control {
-      min-height: 2.4rem;
-    }
-    .chart-panel {
-      border: 1px solid #dbe4ef;
-      border-radius: 0.75rem;
-      background: #ffffff;
-      padding: 0.25rem;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-    }
-    .crawler-panel-label {
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #4b5563;
-      margin: 0 0 0.45rem 0.1rem;
-      font-weight: 600;
-    }
-    .icon-button {
-      position: relative;
-      display: inline-block;
-      border: 1px solid transparent;
-      background: transparent;
-      {#padding: 0;#}
-      margin: 0;
-      cursor: pointer;
-      outline: inherit;
-	    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-      border-radius: 0.6rem;
-      padding: 0.3rem 0.25rem 0.2rem;
-      color: #1f2937;
-      text-decoration: none;
-      box-shadow: none;
-    }
-    .icon-button:hover {
-      background: #f8fafc;
-      border-color: #dbe4ef;
-      box-shadow: none;
-      text-decoration: none;
-      color: #1f2937;
-    }
-    .icon-button:focus,
-    .icon-button:focus-visible {
-      outline: 3px solid #2563eb;
-      outline-offset: 2px;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    }
-
-    .icon-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-
-    .notification-badge {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      font-size: 14px;
-      background: forestgreen;
-    }
-    .icon-button .h4 {
-      font-size: 0.98rem;
-      margin-top: 0.35rem;
-      margin-bottom: 0;
-      font-weight: 600;
-      line-height: 1.25;
-    }
+  <style>
+    .popover { max-width: none; width: 500px; }
+    .dashboard-main { padding-top: .25rem; color: var(--ail-ink); }
+    .chart-panel #feeders_dashboard { height: 360px; }
   </style>
 
 </head>
 <body>
 
-	{% include 'nav_bar.html' %}
+  {% set page_title = 'Intelligence Overview' %}
+  {% set page_eyebrow = 'Operations Center' %}
+  {% include 'nav_bar.html' %}
 
-	<main class="container-fluid dashboard-main">
+  <div class="ail-main">
+    <main class="ail-content dashboard-main">
 
-		<div class="dashboard-hero">
-			<div>
-				<div class="dashboard-eyebrow"><i class="fas fa-satellite-dish mr-1"></i> Operations overview</div>
-				<h1>Intelligence workspace</h1>
-				<p>Monitor collection, discover signals, and pivot through your latest objects.</p>
-			</div>
-			<div class="dashboard-date" id="current_date" aria-label="Current date"></div>
-		</div>
+      {# Page header #}
+      <header class="ail-page-header">
+        <div>
+          <div class="eyebrow"><i class="fas fa-satellite-dish"></i> {{ page_eyebrow }}</div>
+          <h1>{{ page_title }}</h1>
+          <p>Monitor collection activity, discover signals and pivot through your latest intelligence objects.</p>
+        </div>
+        <div class="actions">
+          <span class="ail-pill is-success" title="Current UTC date">
+            <span class="dot"></span>
+            <span id="current_date" aria-label="Current date"></span>
+          </span>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('dashboard.objects_dashboard') }}">
+            <i class="fas fa-th mr-1"></i> Browse objects
+          </a>
+          <a class="btn btn-sm btn-primary" href="{{ url_for('PasteSubmit.PasteSubmit_page') }}">
+            <i class="fas fa-cloud-upload-alt mr-1"></i> Submit intelligence
+          </a>
+        </div>
+      </header>
 
+      <div class="row">
 
-		<div class="row">
+        {# LEFT — search + feeders + crawler status #}
+        <div class="col-12 col-xl-7">
 
-            <div class="col-12 col-xl-6">
-                <div class="search-panel">
-                    <form method="GET" action="{{ url_for('search_b.search_dashboard') }}">
-                        <div class="input-group">
-                            <input type="text"
-                                   class="form-control"
-                                   name="q"
-                                   placeholder="Search chats, domains, titles, filenames…">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fas fa-search"></i> Search
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mt-1">
-                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('search_b.search_dashboard') }}">
-                                <i class="fa-solid fa-sliders mr-1"></i> Search options
-                            </a>
-                        </div>
-                    </form>
+          <section class="ail-search-bar">
+            <div class="ail-search-eyebrow">Search intelligence</div>
+            <h2 class="ail-search-title"><i class="fas fa-search"></i> Find objects, domains, chats &amp; more</h2>
+            <form method="GET" action="{{ url_for('search_b.search_dashboard') }}">
+              <div class="input-group">
+                <input type="text"
+                       class="form-control"
+                       name="q"
+                       placeholder="Search chats, domains, titles, filenames…"
+                       autocomplete="off">
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                  </button>
                 </div>
-                <div class="chart-panel">
-                    <div id="feeders_dashboard" style="width: 100%; height:600px;"></div>
-                </div>
+              </div>
+              <div class="search-actions">
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('search_b.search_dashboard') }}">
+                  <i class="fas fa-sliders-h mr-1"></i> Advanced search
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('hunters.trackers_dashboard') }}">
+                  <i class="fas fa-crosshairs mr-1"></i> Trackers
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('tags_ui.tags_search_items') }}">
+                  <i class="fas fa-tags mr-1"></i> Tags
+                </a>
+              </div>
+            </form>
+          </section>
 
-                <div class="mt-3">
-                    <p class="crawler-panel-label">Crawler status overview</p>
-                    <div class="card crawler-status mt-1 mb-4">
-                    <div class="card-header crawler-status-header">
-                        <div class="row">
-                            <div class="col-1">
-                                <i class="fas fa-user-secret fa-2x"></i>
-                            </div>
-                            <div class="col-5">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div>
-                                            <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=onion&up=True" class="badge badge-success" id="stat_crawler_onion_domain_up">{{ crawlers_stats['onion']['up'] }}</a> Up
-                                        </div>
-                                        <div>
-                                            <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=onion&down=True" class="badge badge-danger" id="stat_crawler_onion_domain_down">{{ crawlers_stats['onion']['down'] }}</a> Down
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div>
-                                            <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=onion&up=True&down=True" class="badge badge-success" id="stat_crawler_onion_total">{{ crawlers_stats['onion']['crawled'] }}</a> Crawled
-                                        </div>
-                                        <div>
-                                            <span class="badge badge-warning" id="stat_crawler_onion_queue">{{ crawlers_stats['onion']['queue'] }}</span> Queue
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-1">
-                                <i class="fab fa-html5 fa-2x"></i>
-                            </div>
-                            <div class="col-5">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div>
-                                            <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=web&up=True" class="badge badge-success" id="stat_crawler_regular_domain_up">{{ crawlers_stats['web']['up'] }}</a> UP
-                                        </div>
-                                        <div>
-                                            <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=web&down=True" class="badge badge-danger" id="stat_crawler_regular_domain_down">{{ crawlers_stats['web']['down'] }}</a> DOWN
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div>
-                                            <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=web&up=True&down=True" class="badge badge-success" id="stat_crawler_regular_total">{{ crawlers_stats['web']['crawled'] }}</a> Crawled
-                                        </div>
-                                        <div>
-                                            <span class="badge badge-warning" id="stat_crawler_regular_queue">{{ crawlers_stats['web']['queue'] }}</span> Queue
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
+          <section class="chart-panel">
+            <div class="chart-panel-head">
+              <span class="chart-panel-title">
+                <i class="fas fa-chart-area"></i> Feeder activity
+              </span>
+              <span class="ail-pill is-info">
+                <span class="dot"></span>
+                <span id="feeders-status">Live</span>
+              </span>
             </div>
+            <div id="feeders_dashboard" style="width: 100%;"></div>
+          </section>
 
-            <div class="col-12 col-xl-6">
-                <div class="dashboard-section-heading">
+          <section class="ail-card mt-3">
+            <header class="ail-card-head">
+              <span><i class="fas fa-spider mr-2 text-primary"></i>Crawler status</span>
+              <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('crawler_splash.crawlers_dashboard') }}">
+                Manage <i class="fas fa-arrow-right ml-1"></i>
+              </a>
+            </header>
+            <div class="ail-card-body">
+              <div class="row">
+                <div class="col-12 col-md-6">
+                  <div class="d-flex align-items-center">
+                    <div class="mr-3" style="font-size:1.5rem; color: var(--ail-accent-2);">
+                      <i class="fas fa-user-secret"></i>
+                    </div>
                     <div>
-                        <div class="dashboard-eyebrow">Live inventory</div>
-                        <h2>Objects collected</h2>
+                      <div class="text-muted" style="font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:600;">Tor (.onion)</div>
+                      <div class="mt-1">
+                        <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=onion&up=True" class="ail-pill is-success" id="stat_crawler_onion_domain_up">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['onion']['up'] }}</span> Up
+                        </a>
+                        <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=onion&down=True" class="ail-pill is-danger ml-1" id="stat_crawler_onion_domain_down">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['onion']['down'] }}</span> Down
+                        </a>
+                      </div>
+                      <div class="mt-1">
+                        <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=onion&up=True&down=True" class="ail-pill" id="stat_crawler_onion_total">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['onion']['crawled'] }}</span> Crawled
+                        </a>
+                        <span class="ail-pill is-warning ml-1" id="stat_crawler_onion_queue">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['onion']['queue'] }}</span> Queue
+                        </span>
+                      </div>
                     </div>
-                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('dashboard.objects_dashboard') }}"><i class="fas fa-cubes mr-1"></i> Browse all</a>
+                  </div>
                 </div>
-
-                <div class="row">
-
-                    {% for obj_type in nb_objects %}
-                        <div class="col-sm-6 col-md-4 col-lg-3 text-center mb-4">
-                            {% with type=obj_type, name=nb_objects[obj_type]['name'], icon=nb_objects[obj_type]['icon'], nb=nb_objects[obj_type]['nb'], url=nb_objects[obj_type]['link'] %}
-                                {% include 'objects/block_obj_button.html' %}
-                            {% endwith %}
-                        </div>
-                    {% endfor %}
-
+                <div class="col-12 col-md-6 mt-3 mt-md-0">
+                  <div class="d-flex align-items-center">
+                    <div class="mr-3" style="font-size:1.5rem; color: var(--ail-info);">
+                      <i class="fab fa-html5"></i>
+                    </div>
+                    <div>
+                      <div class="text-muted" style="font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:600;">Web (clearnet)</div>
+                      <div class="mt-1">
+                        <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=web&up=True" class="ail-pill is-success" id="stat_crawler_regular_domain_up">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['web']['up'] }}</span> Up
+                        </a>
+                        <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=web&down=True" class="ail-pill is-danger ml-1" id="stat_crawler_regular_domain_down">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['web']['down'] }}</span> Down
+                        </a>
+                      </div>
+                      <div class="mt-1">
+                        <a href="{{ url_for('crawler_splash.domains_search_today') }}?type=web&up=True&down=True" class="ail-pill" id="stat_crawler_regular_total">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['web']['crawled'] }}</span> Crawled
+                        </a>
+                        <span class="ail-pill is-warning ml-1" id="stat_crawler_regular_queue">
+                          <span class="dot"></span><span class="count-text">{{ crawlers_stats['web']['queue'] }}</span> Queue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
+              </div>
             </div>
-
-		</div>
-
-
-        <div class="row">
-
-            <div class="col-12 col-xl-6 dashboard-table-panel">
-                <div class="dashboard-table-heading"><span><i class="fas fa-crosshairs mr-2"></i>Recent tracker hits</span><a href="{{ url_for('hunters.trackers_dashboard') }}">View trackers <i class="fas fa-arrow-right ml-1"></i></a></div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th><i class="fa-solid fa-crosshairs"></i></th>
-                            <th>tracker</th>
-                            <th class="text-center"><i class="fas fa-cube"></i></th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tracked_objs">
-                        {% for tracker in trackers %}
-                            <tr>
-                                <td>{{ tracker['type'] }}</td>
-                                <td style="word-break: break-all;">
-                                    <a href="{{ url_for('hunters.show_tracker') }}?uuid={{ tracker['uuid'] }}">{% if tracker['description'] %}{{ tracker['description'] }}{% else %}{{ tracker['tracked'] }}{% endif %}</a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{ tracker['obj']['link'] }}" onmouseenter="show_obj_tooltip(this, '{{ tracker['obj']['gid'] }}')" onmouseleave="hide_obj_tooltip(this)">
-                                        <svg height="26" width="26" style="pointer-events:none;">
-                                        <g class="nodes">
-                                            <circle cx="13" cy="13" r="13" fill="{{ tracker['obj']['icon']['color'] }}"></circle>
-                                            <text x="13" y="13" text-anchor="middle" dominant-baseline="central" class="{{ tracker['obj']['icon']['style'] }}" font-size="16px">{{ tracker['obj']['icon']['icon'] }}</text>
-                                        </g>
-                                    </svg>
-                                    </a>
-                                </td>
-                                <td>{{ tracker['timestamp'] }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="col-12 col-xl-6 dashboard-table-panel">
-                <div class="dashboard-table-heading"><span><i class="fas fa-tags mr-2"></i>Recently tagged</span><a href="{{ url_for('tags_ui.tags_search_items') }}">View tags <i class="fas fa-arrow-right ml-1"></i></a></div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="text-center"><i class="fas fa-cube"></i></th>
-                            <th>ID</th>
-                            <th><i class="fas fa-tag"></i> Tags</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="t_tags_objs">
-                        {% for t_obj in tagged_objs %}
-                            <tr>
-                                <td>
-                                    <a href="{{ t_obj['link'] }}" onmouseenter="show_obj_tooltip(this, '{{ t_obj['gid'] }}')" onmouseleave="hide_obj_tooltip(this)">
-                                        <svg height="26" width="26">
-                                            <g class="nodes">
-                                                <circle cx="13" cy="13" r="13" fill="{{ t_obj['icon']['color'] }}"></circle>
-                                                <text x="13" y="13" text-anchor="middle" dominant-baseline="central" class="{{ t_obj['icon']['style'] }}" font-size="16px">{{ t_obj['icon']['icon'] }}</text>
-                                            </g>
-                                        </svg>
-                                    </a>
-                                </td>
-                                <td style="word-break: break-all;">
-                                    <a href="{{ t_obj['link'] }}">{{ t_obj['id'] }}</a>
-                                </td>
-                                <td>
-                                    {% for tag in t_obj['tags'] %}
-                                        <span class="badge badge-{{ bootstrap_label[loop.index0 % 5] }}">{{ tag }}</span>
-                                    {%  endfor %}
-                                </td>
-                                <td>{{ t_obj['date_tag'] }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
+          </section>
         </div>
 
+        {# RIGHT — object intelligence #}
+        <div class="col-12 col-xl-5">
 
-	</main>
+          <div class="ail-section-head">
+            <h2><i class="fas fa-cubes"></i> Object intelligence</h2>
+            <div class="actions">
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('dashboard.objects_dashboard') }}">
+                Browse all <i class="fas fa-arrow-right ml-1"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="row">
+            {% for obj_type in nb_objects %}
+              <div class="col-6 col-md-4 mb-3">
+                {% with type=obj_type, name=nb_objects[obj_type]['name'], icon=nb_objects[obj_type]['icon'], nb=nb_objects[obj_type]['nb'], url=nb_objects[obj_type]['link'] %}
+                  {% include 'objects/block_obj_button.html' %}
+                {% endwith %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="row mt-2">
+
+        <div class="col-12 col-xl-6">
+          <div class="ail-card">
+            <header class="ail-card-head">
+              <span><i class="fas fa-crosshairs mr-2 text-primary"></i>Recent tracker hits</span>
+              <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('hunters.trackers_dashboard') }}">All trackers <i class="fas fa-arrow-right ml-1"></i></a>
+            </header>
+            <div class="ail-card-body p-0">
+              {% if trackers and trackers|length > 0 %}
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Tracker</th>
+                      <th class="text-center">Object</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tracked_objs">
+                    {% for tracker in trackers %}
+                      <tr>
+                        <td><span class="ail-pill is-info">{{ tracker['type'] }}</span></td>
+                        <td style="word-break: break-all;">
+                          <a href="{{ url_for('hunters.show_tracker') }}?uuid={{ tracker['uuid'] }}">{% if tracker['description'] %}{{ tracker['description'] }}{% else %}{{ tracker['tracked'] }}{% endif %}</a>
+                        </td>
+                        <td class="text-center">
+                          <a href="{{ tracker['obj']['link'] }}" onmouseenter="show_obj_tooltip(this, '{{ tracker['obj']['gid'] }}')" onmouseleave="hide_obj_tooltip(this)">
+                            <svg height="26" width="26" style="pointer-events:none;">
+                              <g class="nodes">
+                                <circle cx="13" cy="13" r="13" fill="{{ tracker['obj']['icon']['color'] }}"></circle>
+                                <text x="13" y="13" text-anchor="middle" dominant-baseline="central" class="{{ tracker['obj']['icon']['style'] }}" font-size="16px">{{ tracker['obj']['icon']['icon'] }}</text>
+                              </g>
+                            </svg>
+                          </a>
+                        </td>
+                        <td><span class="text-muted">{{ tracker['timestamp'] }}</span></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="ail-empty">
+                  <i class="fas fa-crosshairs"></i>
+                  <div class="empty-title">No tracker hits yet</div>
+                  Configure a tracker in <a href="{{ url_for('hunters.trackers_dashboard') }}">Hunting</a>
+                  to start collecting signals.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-6 mt-3 mt-xl-0">
+          <div class="ail-card">
+            <header class="ail-card-head">
+              <span><i class="fas fa-tags mr-2 text-primary"></i>Recently tagged</span>
+              <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('tags_ui.tags_search_items') }}">All tags <i class="fas fa-arrow-right ml-1"></i></a>
+            </header>
+            <div class="ail-card-body p-0">
+              {% if tagged_objs and tagged_objs|length > 0 %}
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Object</th>
+                      <th>ID</th>
+                      <th>Tags</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="t_tags_objs">
+                    {% for t_obj in tagged_objs %}
+                      <tr>
+                        <td class="text-center">
+                          <a href="{{ t_obj['link'] }}" onmouseenter="show_obj_tooltip(this, '{{ t_obj['gid'] }}')" onmouseleave="hide_obj_tooltip(this)">
+                            <svg height="26" width="26">
+                              <g class="nodes">
+                                <circle cx="13" cy="13" r="13" fill="{{ t_obj['icon']['color'] }}"></circle>
+                                <text x="13" y="13" text-anchor="middle" dominant-baseline="central" class="{{ t_obj['icon']['style'] }}" font-size="16px">{{ t_obj['icon']['icon'] }}</text>
+                              </g>
+                            </svg>
+                          </a>
+                        </td>
+                        <td style="word-break: break-all;">
+                          <a href="{{ t_obj['link'] }}">{{ t_obj['id'] }}</a>
+                        </td>
+                        <td>
+                          {% for tag in t_obj['tags'] %}
+                            <span class="badge badge-{{ bootstrap_label[loop.index0 % 5] }} mr-1 mb-1">{{ tag }}</span>
+                          {%  endfor %}
+                        </td>
+                        <td><span class="text-muted">{{ t_obj['date_tag'] }}</span></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="ail-empty">
+                  <i class="fas fa-tags"></i>
+                  <div class="empty-title">No tagged objects yet</div>
+                  Apply a tag from any <a href="{{ url_for('dashboard.objects_dashboard') }}">object view</a>
+                  to populate this feed.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
 
 <script>
-    var chart = {};
     $(document).ready(function(){
         $("#page-Dashboard").addClass("active");
         $("#nav_dashboard_{{obj_type}}").addClass("active");
@@ -352,40 +342,43 @@
         {% endfor %}
     }
 
-
-
 optionFeeder = {
-  title: {
-    text: 'Feeders'
-  },
+  backgroundColor: 'transparent',
   tooltip: {
     trigger: 'axis',
     axisPointer: {
       type: 'cross',
-      label: {
-        backgroundColor: '#6a7985'
-      }
-    }
+      label: { backgroundColor: '#1B2540', color: '#E6ECF7', borderColor: '#283555' }
+    },
+    backgroundColor: 'rgba(15, 22, 38, 0.96)',
+    borderColor: '#283555',
+    borderWidth: 1,
+    textStyle: { color: '#E6ECF7', fontSize: 12 }
   },
   legend: {
-    data: feeders_names
+    data: feeders_names,
+    top: 6, right: 8,
+    textStyle: { color: '#B4BFD4', fontSize: 11 }
   },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true
-  },
+  grid: { left: 50, right: 16, top: 36, bottom: 28, containLabel: true },
+  color: ['#4A6CF7', '#22D3EE', '#A855F7', '#10B981', '#F59E0B', '#EF4444', '#38BDF8'],
   xAxis: [
     {
       type: 'category',
       boundaryGap: false,
-      data: feeders_xaxis
+      data: feeders_xaxis,
+      axisLine: { lineStyle: { color: '#1C2740' } },
+      axisLabel: { color: '#7B8AA6', fontSize: 11 },
+      axisTick: { lineStyle: { color: '#1C2740' } }
     }
   ],
   yAxis: [
     {
-      type: 'value'
+      type: 'value',
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { lineStyle: { color: '#1C2740' } },
+      axisLabel: { color: '#7B8AA6', fontSize: 11 }
     }
   ],
   series: [
@@ -394,10 +387,12 @@ optionFeeder = {
               name: '{{ feeder }}',
               type: 'line',
               stack: 'Total',
-              areaStyle: {},
-              emphasis: {
-                  focus: 'series'
-              },
+              smooth: true,
+              symbol: 'circle',
+              symbolSize: 5,
+              lineStyle: { width: 1.6 },
+              areaStyle: { opacity: .15 },
+              emphasis: { focus: 'series' },
               data: feeders_data['{{ feeder }}']
           },
       {% endfor %}
@@ -406,7 +401,6 @@ optionFeeder = {
 
 optionFeeder && feederChart.setOption(optionFeeder);
 
-{# TODO UPDATE NEW FEEDER NAME#}
 function updateFeederChart(data) {
     let new_date = data['date']
     feeders_xaxis.push(new_date)
@@ -420,10 +414,8 @@ function updateFeederChart(data) {
             let fdata = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, data['data'][f_name]]
             feeders_names.push(f_name)
             feeders_data[f_name] = fdata
-            // add new feeder
             optionFeeder.legend.data.push(f_name)
-            optionFeeder.series.push({name: f_name, type: 'line', stack: 'Total', areaStyle: {}, emphasis: {focus: 'series'}, data: feeders_data[f_name]})
-
+            optionFeeder.series.push({name: f_name, type: 'line', stack: 'Total', smooth: true, symbol: 'circle', symbolSize: 5, lineStyle: { width: 1.6 }, areaStyle: { opacity: .15 }, emphasis: {focus: 'series'}, data: feeders_data[f_name]})
         }
     }
     feederChart.setOption(optionFeeder)
@@ -432,13 +424,9 @@ function updateFeederChart(data) {
 function updateDate() {
     let d = new Date();
     let day = d.getUTCDate();
-    if (day < 10) {
-        day = "0" + day;
-    }
+    if (day < 10) { day = "0" + day; }
     let month = d.getUTCMonth() + 1
-    if (month < 10) {
-        month = "0" + month;
-    }
+    if (month < 10) { month = "0" + month; }
     let current_date = d.getUTCFullYear() + ' - ' + month + ' - ' + day;
     $('#current_date').text(current_date)
 }
@@ -451,14 +439,20 @@ function updateNbObjects(data) {
 
 function updateCrawlerStats(data) {
     updateDate();
-    $("#stat_crawler_onion_domain_up").text(data['onion']['up']);
-    $("#stat_crawler_onion_domain_down").text(data['onion']['down']);
-    $("#stat_crawler_onion_total").text(data['onion']['crawled']);
-    $("#stat_crawler_onion_queue").text(data['onion']['queue']);
-    $("#stat_crawler_regular_domain_up").text(data['web']['up']);
-    $("#stat_crawler_regular_domain_down").text(data['web']['down']);
-    $("#stat_crawler_regular_total").text(data['web']['crawled']);
-    $("#stat_crawler_regular_queue").text(data['web']['queue']);
+    function setPill(id, val) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var c = el.querySelector('.count-text');
+        if (c) c.textContent = val;
+    }
+    setPill('stat_crawler_onion_domain_up',    data['onion']['up']);
+    setPill('stat_crawler_onion_domain_down',  data['onion']['down']);
+    setPill('stat_crawler_onion_total',        data['onion']['crawled']);
+    setPill('stat_crawler_onion_queue',       data['onion']['queue']);
+    setPill('stat_crawler_regular_domain_up',  data['web']['up']);
+    setPill('stat_crawler_regular_domain_down',data['web']['down']);
+    setPill('stat_crawler_regular_total',      data['web']['crawled']);
+    setPill('stat_crawler_regular_queue',      data['web']['queue']);
 }
 
 ///////
@@ -472,12 +466,8 @@ function create_obj_svg(container, obj_gid, url, color, fa_style, icon) {
     }
     var svg_obj = '<svg height="26" width="26"> <g class="nodes"> <circle cx="13" cy="13" r="13" fill="' + color + '"></circle>' + icon_markup + '</g> </svg>';
     var obj_link = $('<a>');
-    obj_link.on('mouseenter',  function () {
-        show_obj_tooltip(this, obj_gid);
-    });
-    obj_link.on('mouseleave',  function () {
-        hide_obj_tooltip(this);
-    });
+    obj_link.on('mouseenter',  function () { show_obj_tooltip(this, obj_gid); });
+    obj_link.on('mouseleave',  function () { hide_obj_tooltip(this); });
     obj_link.attr('href', url);
     obj_link.html(svg_obj);
     container.append(obj_link);
@@ -487,63 +477,51 @@ function create_obj_svg(container, obj_gid, url, color, fa_style, icon) {
 function create_tags_badges(container, tags) {
     var tspan = '';
     for (const i in tags) {
-        tspan = tspan + '<span class="badge badge-' + 'primary' + '">' + sanitize_text(tags[i]) + '</span>'
+        tspan = tspan + '<span class="badge badge-' + 'primary' + ' mr-1 mb-1">' + sanitize_text(tags[i]) + '</span>'
     }
     return tspan;
 }
 
 function update_tags_obj_dashboard(data) {
-    // delete table
     var tbody = $("#t_tags_objs");
+    if (!tbody.length) return;
     var ntd;
     tbody.empty();
     for (const elem in data) {
         let obj = data[elem];
         var row = $('<tr></tr>');
-        ntd = $('<td></td>');
+        ntd = $('<td class="text-center"></td>');
         row.append(create_obj_svg(ntd, obj['gid'], obj.link, obj['icon']['color'], obj['icon']['style'], obj['icon']['icon']))
         row.append('<td style="word-break: break-all;"><a href="'+ obj['link'] + '">' + sanitize_text(obj['id']) + '</a></td>');
         ntd = $('<td></td>');
         row.append(create_tags_badges(ntd, obj['tags']));
-        row.append('<td>' + obj['date_tag'] + '</td>');
+        row.append('<td><span class="text-muted">' + obj['date_tag'] + '</span></td>');
         tbody.append(row);
-
-
-{#   {% for tag in t_obj['tags'] %}#}
-{#       <span class="badge badge-{{ bootstrap_label[loop.index0 % 5] }}">{{ tag }}</span>#}
-{#   {%  endfor %}#}
-{#</td>#}
     }
 }
 
 function update_tracked_objs_dashboard(data) {
-    // delete table
     var tbody = $("#tracked_objs");
+    if (!tbody.length) return;
     var ntd;
     tbody.empty();
     for (const elem in data) {
         let tracker = data[elem];
         var row = $('<tr></tr>');
-        row.append('<td>' + tracker['type'] + '</td>');
+        row.append('<td><span class="ail-pill is-info">' + tracker['type'] + '</span></td>');
         let name;
-        if (tracker['description']) {
-            name = tracker['description'];
-        } else {
-            name = tracker['tracked'];
-        }
+        if (tracker['description']) { name = tracker['description']; } else { name = tracker['tracked']; }
         row.append('<td style="word-break: break-all;"><a href="{{ url_for('hunters.show_tracker') }}?uuid=' + tracker['uuid'] + '">' + sanitize_text(name) + '</a></td>');
         ntd = $('<td class="text-center"></td>');
         row.append(create_obj_svg(ntd, tracker['obj']['gid'], tracker['obj']['link'], tracker['obj']['icon']['color'], tracker['obj']['icon']['style'], tracker['obj']['icon']['icon']));
-        row.append('<td>' + tracker['timestamp'] + '</td>');
+        row.append('<td><span class="text-muted">' + tracker['timestamp'] + '</span></td>');
         tbody.append(row);
     }
 }
 
 // WebSocket
 var socket = new WebSocket("wss://" + window.location.host + "/ws/dashboard");
-socket.wsocket = function(event) {
-    console.log("WebSocket connection opened:", event);
-};
+socket.wsocket = function(event) { console.log("WebSocket connection opened:", event); };
 socket.onmessage = function(event) {
     $("[data-toggle='popover']").popover('destroy');
     let data = JSON.parse(event.data);
@@ -553,13 +531,8 @@ socket.onmessage = function(event) {
     update_tracked_objs_dashboard(data['trackers']);
     update_tags_obj_dashboard(data['tags']);
 };
-socket.onerror = function(error) {
-    console.error('WebSocket error:', error);
-};
-socket.onclose = function(event) {
-    console.log('WebSocket connection closed:', event);
-};
-
+socket.onerror = function(error) { console.error('WebSocket error:', error); };
+socket.onclose = function(event) { console.log('WebSocket connection closed:', event); };
 
 </script>
 

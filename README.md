@@ -1,42 +1,14 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/ail-project/ail-framework/master/var/www/static/image/ail-icon.png" height="220" alt="AIL logo" />
-</p>
-
-<h1 align="center">AIL Framework</h1>
+<h1 align="center">Black Pearl</h1>
 
 <p align="center">
-  Open-source framework for the collection, crawling, processing, and analysis of unstructured information.
+  Team platform for collecting, crawling, processing, and analysing unstructured intelligence data.
 </p>
 
-<p align="center">
-  <a href="https://github.com/ail-project/ail-framework/releases/latest">
-    <img src="https://img.shields.io/github/v/release/ail-project/ail-framework?label=Release" alt="Latest Release">
-  </a>
-  <a href="https://github.com/ail-project/ail-framework/actions/workflows/ail_framework_test.yml">
-    <img src="https://github.com/ail-project/ail-framework/actions/workflows/ail_framework_test.yml/badge.svg" alt="CI">
-  </a>
-  <a href="https://gitter.im/ail-project/?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
-    <img src="https://badges.gitter.im/ail-project.svg" alt="Gitter">
-  </a>
-  <a href="https://github.com/ail-project/ail-framework/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/ail-project/ail-framework.svg" alt="Contributors">
-  </a>
-  <a href="https://github.com/ail-project/ail-framework/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/ail-project/ail-framework.svg" alt="License">
-  </a>
-</p>
+## About Black Pearl
 
-AIL framework is an open-source platform to **collect, crawl, process and analyse unstructured data** from the clear web, Tor, I2P, chats, files and external feeds.
+Black Pearl is an open-source platform to **collect, crawl, process and analyse unstructured data** from the clear web, Tor, I2P, chats, files and external feeds. It helps analysts transform raw, messy content into structured intelligence through extraction, tagging, detection, correlation and investigation workflows.
 
-Originally developed at [CIRCL](https://www.circl.lu/), AIL helps analysts transform raw, messy content into structured intelligence through extraction, tagging, detection, correlation and investigation workflows.
-
-![AIL dashboard](https://www.ail-project.org/assets/img/dashboard.jpeg "AIL dashboard")
-
-## What is AIL?  https://ail-project.org
-
-AIL (Analysis of Information Leaks) is an open-source framework for the collection, crawling, processing, and analysis of unstructured information. It supports threat intelligence, leak analysis, and investigative workflows by helping analysts extract, detect, correlate, and share relevant information from a wide range of sources.
-
-AIL includes:
+Black Pearl includes:
 - an **extensible Python-based framework** for processing and analysing unstructured information,
 - a **crawler manager** for continuous and authenticated collection,
 - **feeders** for communication platforms and external streams,
@@ -44,9 +16,9 @@ AIL includes:
 - **search, correlation and investigation** capabilities to pivot across extracted data,
 - and **export/integration** features for platforms such as [MISP](https://github.com/MISP/MISP).
 
-## AIL intelligence lifecycle
+## Intelligence lifecycle
 
-AIL follows a practical intelligence workflow:
+Black Pearl follows a practical intelligence workflow:
 
 1. **Collection**
    Continuous ingestion from chats, websites, hidden services, files and feeds.
@@ -59,9 +31,9 @@ AIL follows a practical intelligence workflow:
 5. **Dissemination**
    Export of findings and objects to MISP intelligence-sharing platforms.
 
-## What’s new in AIL v6.7
+## Platform capabilities
 
-AIL is now at **v6.7** and recent releases significantly expanded search, image analysis, crawling and document-processing capabilities.
+Recent releases significantly expanded search, image analysis, crawling and document-processing capabilities.
 
 Highlights include:
 
@@ -76,13 +48,11 @@ Highlights include:
 
 ## Features
 
-![AIL internal overview](./doc/screenshots/ail-internal.png?raw=true "AIL internal overview")
-
 ### Collection
 
 - Modular architecture to handle streams of unstructured information
 - Multiple feeder and importer support
-- Feeders for chat and stream sources such as [Discord](https://github.com/ail-project/ail-feeder-discord), [Telegram](https://github.com/ail-project/ail-feeder-telegram) and other providers
+- Feeders for chat and stream sources such as Discord, Telegram and other providers
 - Crawling support for the clear web, darknet, **Tor hidden services** (.onion), and **I2P**
 - Authenticated crawling with browser sessions, cookies and local storage reuse
 - Continuous or on-demand monitoring of websites and hidden services over time
@@ -103,7 +73,7 @@ Highlights include:
 
 ### Detection and tracking
 
-Trackers are user-defined rules or patterns that automatically detect, tag and notify analysts about relevant information collected by AIL.
+Trackers are user-defined rules or patterns that automatically detect, tag and notify analysts about relevant information collected by Black Pearl.
 
 Supported tracker types:
 
@@ -120,13 +90,13 @@ Detection capabilities include:
 - webhook or email notification workflows
 - built-in YARA editor
 
-AIL also supports **Retro Hunts**, enabling analysts to run newly created YARA rules against **historical data** to uncover previously missed content.
+Black Pearl also supports **Retro Hunts**, enabling analysts to run newly created YARA rules against **historical data** to uncover previously missed content.
 
-![tracker-create](./doc/screenshots/tracker_create.png "AIL tracker creation")
+![tracker-create](./doc/screenshots/tracker_create.png "Tracker creation")
 
-![tracker-yara](./doc/screenshots/tracker_yara.png "AIL YARA tracker")
+![tracker-yara](./doc/screenshots/tracker_yara.png "YARA tracker")
 
-![retro-hunt](./doc/screenshots/retro_hunt.png "AIL retro hunt")
+![retro-hunt](./doc/screenshots/retro_hunt.png "Retro hunt")
 
 ### Search, correlation and investigation
 
@@ -145,18 +115,18 @@ AIL also supports **Retro Hunts**, enabling analysts to run newly created YARA r
   - ...
 - Investigation workflow to group, enrich and follow analyst findings
 
-![global search](./doc/screenshots/search.png "AIL global search")
+![global search](./doc/screenshots/search.png "Global search")
 
 ### Export and integrations
 
 - Alerting and sharing to [MISP](https://github.com/MISP/MISP)
-- Export of AIL objects and investigations to MISP formats
+- Export of objects and investigations to MISP formats
 - Automatic exports on selected detections and tags
 - Integrations supporting collaborative intelligence and incident-response workflows
 
-## Why AIL?
+## Why Black Pearl?
 
-AIL is built for analysts who need to work with **messy, real-world data**:
+Black Pearl is built for analysts who need to work with **messy, real-world data**:
 
 - free text,
 - screenshots,
@@ -165,7 +135,7 @@ AIL is built for analysts who need to work with **messy, real-world data**:
 - encoded payloads,
 - content collected from web, Tor and I2P sources.
 
-Instead of treating those sources separately, AIL helps turn them into searchable, correlated and actionable intelligence.
+Instead of treating those sources separately, Black Pearl helps turn them into searchable, correlated and actionable intelligence.
 
 ## Screenshots
 
@@ -211,18 +181,18 @@ Instead of treating those sources separately, AIL helps turn them into searchabl
 
 ## Installation
 
-To install the AIL framework:
+To install Black Pearl:
 
 ```bash
-# Clone the repository
-git clone https://github.com/ail-project/ail-framework.git
-cd ail-framework
+# Clone Black Pearl
+git clone https://github.com/BurmanHarsh/Deanonymization-Solution.git
+cd Deanonymization-Solution
 git submodule update --init --recursive
 
 # Install dependencies on Debian/Ubuntu-based distributions
 ./installing_deps.sh
 
-# Start AIL
+# Start Black Pearl
 cd bin
 ./LAUNCH.sh -l
 ```
@@ -233,13 +203,14 @@ The default [installing_deps.sh](./installing_deps.sh) script targets Debian and
 
 - Python 3.8+
 
-[How to size the hardware requirements for AIL?](https://ail-project.org/faq.html)
+Size the deployment according to the expected volume of collected data, crawlers, and active analysis modules.
 
 ### Installation notes
 
 
-Some optional components require additional configuration, including the **Lacus crawler**, the **Meilisearch search indexer**, and the **translation**. See the [HOWTO](https://github.com/ail-project/ail-framework/blob/master/HOWTO.md#crawler) for detailed setup instructions.
-## Starting AIL
+Some optional components require additional configuration, including the **Lacus crawler**, the **Meilisearch search indexer**, and translation. See [HOWTO.md](HOWTO.md) for detailed setup instructions.
+
+## Starting Black Pearl
 
 ```bash
 cd bin
@@ -263,31 +234,16 @@ The default credentials are stored in the `DEFAULT_PASSWORD` file and the file i
 ## Training
 
 
-Training materials on how to use and extend the AIL framework are available at [ail-project/ail-training](https://github.com/ail-project/ail-training).
+Use the project documentation and HOWTO guides to operate and extend Black Pearl.
 ## Privacy and GDPR
 
-For information on privacy and GDPR-related considerations, see the document [AIL information leaks analysis and the GDPR in the context of collection, analysis and sharing information leaks](https://www.circl.lu/assets/files/information-leaks-analysis-and-gdpr.pdf).
+For information on privacy and GDPR-related considerations, review the applicable laws and policies governing collection, analysis and sharing of information.
 
-This document provides guidance on using AIL in a lawful context, especially within the scope of the General Data Protection Regulation.
-
-## Research using AIL
-
-If you use or reference AIL in academic work, you can cite it as follows:
-
-```bibtex
-@inproceedings{mokaddem2018ail,
-  title={AIL-The design and implementation of an Analysis Information Leak framework},
-  author={Mokaddem, Sami and Wagener, G{\'e}rard and Dulaunoy, Alexandre},
-  booktitle={2018 IEEE International Conference on Big Data (Big Data)},
-  pages={5049--5057},
-  year={2018},
-  organization={IEEE}
-}
-```
+Operate Black Pearl lawfully, especially within the scope of the General Data Protection Regulation.
 
 ## Funding 🇪🇺 
 
-AIL is developed and maintained with the support of the **European Union** as part of the **HOPLITE** European Project and part of the **AIPITCH** European project.
+Black Pearl is maintained as an independent team project.
 
 ![EU logo](https://www.vulnerability-lookup.org/images/eu-funded.jpg)
 

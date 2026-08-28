@@ -140,9 +140,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: radial-gradient(circle at top left, #e0ebff 0, #f4f7fb 42%, #eef2f8 100%) !important;
 }
 .ail-auth-card {
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  max-width: 420px;
   background: rgba(255, 255, 255, .94);
   border: 1px solid rgba(255, 255, 255, .8);
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(23, 32, 51, .13);
 }
+.ail-auth .form-signin > img,
+.ail-auth .form-signin img { max-width: 100%; height: auto; }
+.ail-auth .form-control { width: 100%; }
 .ail-auth .list-group-item { border-color: var(--ail-line); text-align: left; }

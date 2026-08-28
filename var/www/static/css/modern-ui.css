@@ -187,3 +187,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .dashboard-table-heading a { font-size: .75rem; font-weight: 650; }
 .dashboard-table-panel .table { margin-bottom: 0; }
 @media (max-width: 575.98px) { .dashboard-hero { align-items: flex-start; flex-direction: column; padding: 1.1rem; } .dashboard-date { align-self: stretch; } .dashboard-table-panel { padding-left: .65rem; padding-right: .65rem; } }
+
+/* Keep the primary navigation horizontal at every viewport width. */
+.ail-topbar { flex-wrap: nowrap; }
+.ail-topbar .navbar-toggler { display: none; }
+.ail-topbar .navbar-collapse.collapse { display: flex !important; flex-basis: auto; }
+.ail-topbar .navbar-nav { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; white-space: nowrap; scrollbar-width: thin; }
+.ail-topbar .navbar-nav::-webkit-scrollbar { height: 4px; }
+.ail-topbar .navbar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.3); border-radius: 4px; }
+@media (max-width: 1199.98px) { .ail-topbar .navbar-collapse { padding-top: 0; } .ail-topbar .nav-link { padding: .55rem .6rem !important; } }

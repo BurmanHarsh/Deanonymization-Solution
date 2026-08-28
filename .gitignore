@@ -1,25 +1,70 @@
 # Deanonymization-Solution — based on AIL Framework
 
 # Editor / OS
-*.swp *.swo *.bak *.tmp *.orig *~ .DS_Store Thumbs.db
-.idea/ .vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*~
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
 
 # Python
-__pycache__/ *.pyc *.pyo .coverage htmlcov/
-.pytest_cache/ .mypy_cache/ .ruff_cache/
+__pycache__/
+*.pyc
+*.pyo
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
 # Virtualenvs
-.venv/ venv/ env/ AILENV/ ENV/
+.venv/
+venv/
+env/
+AILENV/
+ENV/
 
 # AIL runtime data — DO NOT COMMIT
 logs/
 var/www/submitted
 var/www/server.key
-PASTES/ CRAWLED_SCREENSHOT/ IMAGES/ FAVICONS/ FILES/ BASE64/ HASHS/
-DATA_ARDB/ DATA_KVROCKS/ redis/ ardb/ kvrocks/ faup/ tlsh/
-Blooms/ indexdir/ old/ pgpdump/ temp/
+var/www/server.crt
+PASTES/
+CRAWLED_SCREENSHOT/
+IMAGES/
+FAVICONS/
+FILES/
+BASE64/
+HASHS/
+DATA_ARDB/
+DATA_KVROCKS/
+redis/
+ardb/
+kvrocks/
+faup/
+tlsh/
+Blooms/
+indexdir/
+old/
+pgpdump/
+temp/
 
-# Local config + secrets (but keep .sample files)
+# Web static/generated files
+var/www/static/
+!var/www/static/css/dygraph_gallery.css
+!var/www/static/js/indexjavascript.js
+!var/www/static/js/moduleTrending.js
+!var/www/static/js/plot-graph.js
+!var/www/static/js/trendingchart.js
+
+# Local config + secrets
+configs/keys
 configs/keys/mispKEYS.py
 configs/keys/theHiveKEYS.py
 configs/keys/virusTotalKEYS.py
@@ -27,6 +72,8 @@ configs/core.cfg
 configs/core.cfg.backup
 configs/update.cfg
 configs/d4client_passiveDNS_conf/uuid
+
+# Runtime/version files
 update/current_version
 DEFAULT_PASSWORD
 
@@ -34,11 +81,14 @@ DEFAULT_PASSWORD
 tools/gen_cert/rootCA.*
 tools/gen_cert/server.*
 
-# YARA custom rules (user-specific)
+# Tools
+tools
+
+# YARA custom rules
 bin/trackers/yara/custom-rules/*
 !bin/trackers/yara/custom-rules/test.yar
 
-# Auto-generated docs
+# Auto-generated docs/data
 doc/all_modules.txt
 doc/module-data-flow.png
 doc/data-flow.png
@@ -50,10 +100,23 @@ doc/statistics
 pystemon/archives
 
 # Deanonymization-Solution additions
-.env .env.* !.env.example
-*.pem *.key *.secret
-data/raw/ data/processed/ data/cache/
-models/checkpoints/ models/*.pt models/*.pkl
-deanon_cache/ *.parquet *.feather
-.ipynb_checkpoints/
-*.log *.log.*
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.secret
+data/raw/
+data/processed/
+data/cache/
+models/checkpoints/
+models/*.pt
+models/*.pkl
+deanon_cache/
+*.parquet
+*.feather
+*.log
+*.log.*
+
+# Other local files
+files

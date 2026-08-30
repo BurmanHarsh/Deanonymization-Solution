@@ -1,0 +1,225 @@
+/* AIL Compact Analyst UI - Core Styles */
+:root {
+    --ail-dark-bg: #202c43;
+    --ail-dark-text: #c8d2e3;
+    --ail-dark-hover: rgba(255, 255, 255, 0.1);
+    --ail-border: #dbe4ef;
+    --ail-bg-light: #ffffff;
+    --ail-bg-canvas: #f4f7fb;
+    --ail-text-main: #1f2937;
+    --ail-text-muted: #64748b;
+    --ail-primary: #2563eb;
+    --ail-radius-sm: 4px;
+}
+
+/* SCOPED TO DASHBOARD ONLY */
+body.dashboard-page {
+    font-size: 0.85rem !important;
+    background-color: var(--ail-bg-canvas) !important;
+    color: var(--ail-text-main) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.dashboard-page * {
+    box-sizing: border-box;
+}
+
+/* --- Top Navbar (Only when on dashboard) --- */
+body.dashboard-page .ail-navbar {
+    background-color: var(--ail-dark-bg) !important;
+    color: white !important;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+body.dashboard-page .ail-navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white !important;
+    font-weight: 700;
+    margin-right: 2rem;
+    gap: 8px;
+}
+
+body.dashboard-page .ail-navbar-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+body.dashboard-page .ail-navbar-links {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+}
+
+body.dashboard-page .ail-navbar-link {
+    color: var(--ail-dark-text) !important;
+    text-decoration: none !important;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: var(--ail-radius-sm);
+    transition: background 0.15s ease;
+}
+
+body.dashboard-page .ail-navbar-link:hover {
+    background: var(--ail-dark-hover);
+    color: white !important;
+}
+
+body.dashboard-page .ail-navbar-link.active {
+    background: var(--ail-primary);
+    color: white !important;
+}
+
+/* --- Main Layout --- */
+.dashboard-page .ail-dashboard-wrapper {
+    padding: 1rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.dashboard-page .ail-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-page .ail-col-6 {
+    flex: 0 0 calc(50% - 0.5rem);
+}
+
+/* --- Components --- */
+.dashboard-page .ail-card {
+    background: var(--ail-bg-light);
+    border: 1px solid var(--ail-border);
+    border-radius: var(--ail-radius-sm);
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+.dashboard-page .ail-card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ail-text-muted);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* Statistics Grid */
+.dashboard-page .ail-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.dashboard-page .ail-stat-item {
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid var(--ail-border);
+    border-radius: var(--ail-radius-sm);
+    background: #fafbfc;
+}
+
+.dashboard-page .ail-stat-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-page .ail-stat-count {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 10px;
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-page .ail-stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ail-text-muted);
+    font-weight: 500;
+}
+
+/* Status Bar */
+.dashboard-page .ail-status-bar {
+    background: var(--ail-dark-bg);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: var(--ail-radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+}
+
+.dashboard-page .ail-status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dashboard-page .ail-status-label {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.dashboard-page .ail-status-value {
+    font-weight: 700;
+    color: white;
+}
+
+/* Tables */
+.dashboard-page .ail-table-container {
+    overflow-x: auto;
+}
+
+.dashboard-page .ail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.dashboard-page .ail-table th {
+    background: #f8fafc;
+    color: var(--ail-text-muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 2px solid var(--ail-border);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
+
+.dashboard-page .ail-table td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--ail-border);
+    vertical-align: middle;
+}
+
+.dashboard-page .ail-table tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Utilities */
+.dashboard-page .text-muted { color: var(--ail-text-muted) !important; }
+.dashboard-page .bg-light { background-color: var(--ail-bg-canvas) !important; }

@@ -135,14 +135,80 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .table-responsive { border-radius: 10px; }
 }
 
-/* Standalone identity and security screens */
-.ail-auth {
-  background: radial-gradient(circle at top left, #e0ebff 0, #f4f7fb 42%, #eef2f8 100%) !important;
+/* ... (rest of the file) ... */
+
+/* Compact Reference Navbar Styles */
+.ail-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #121b2d;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  height: 58px;
+  padding: 0 20px;
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
-.ail-auth-card {
-  background: rgba(255, 255, 255, .94);
-  border: 1px solid rgba(255, 255, 255, .8);
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(23, 32, 51, .13);
+
+.ail-navbar-brand {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+  margin-right: 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
-.ail-auth .list-group-item { border-color: var(--ail-line); text-align: left; }
+
+.ail-navbar-brand a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ail-navbar-brand img {
+  height: 32px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.ail-navbar-brand .brand-text {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.ail-navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 15px;
+  align-items: center;
+}
+
+.ail-navbar-links li a {
+  color: #c8d2e3;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.ail-navbar-links li a i {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.ail-navbar-links li a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}

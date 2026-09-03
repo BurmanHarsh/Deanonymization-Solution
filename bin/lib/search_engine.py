@@ -86,7 +86,27 @@ def get_indexes_names():
     return INDEX_NAMES
 
 
+def index_manual_submitted():
+    import os, gzip
+    items_dir = os.path.join(os.environ.get('AIL_HOME', ''), 'PASTES/submitted')
+    if not items_dir or not os.path.exists(items_dir):
+        return
+    for root, dirs, files in os.walk(items_dir):
+        for file in files:
+            if file.endswith('.gz'):
+                full_path = os.path.join(root, file)
+                try:
+                    with gzip.open(full_path, 'rt', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                        # Use a uuid for the document
+                        doc_id = file.replace('submitted_', '').replace('.gz', '')
+                        document = {'uuid': doc_id, 'content': content, 'last': int(time.time())}
+                        Engine.add('filename', document)
+                except Exception as e:
+                    logger.error(f"Failed to index manual file {file}: {e}")
+
 def index_all():
+
     # Engine._delete_all()
     # Engine._delete('onion')
     # delete_crawled_content_domains_items()
@@ -103,6 +123,8 @@ def index_all():
     index_domains_descriptions()
     index_titles()
     index_file_names()
+    index_manual_submitted()
+
 
 
 class MeiliSearch:
@@ -676,6 +698,13 @@ def api_search(data):
         except:
             return {"status": "error", "reason": "Invalid date to"}, 400
 
+    if Engine is None:
+        return {
+            "status": "error",
+            "error_type": "meilisearch_disabled",
+            "reason": "Search engine is disabled in the configuration. Please enable Meilisearch in core.cfg."
+        }, 503
+
     try:
         result = Engine.search(indexes, to_search, page=page, nb=nb_per_page, timestamp_from=timestamp_from, sort=sort,
                                timestamp_to=timestamp_to, forum_ids=forum_ids, forum_types=forum_types)
@@ -692,70 +721,104 @@ def api_search(data):
             "reason": "Meilisearch is unreachable. Install/start Meilisearch or check the connection settings."
         }, 503
 
+    # Aggregate results from multi_search (which returns a list)
+    all_hits = []
+    total_hits = 0
+    if result:
+        for res in result:
+            if isinstance(res, dict):
+                all_hits.extend(res.get('hits', []))
+                total_hits += res.get('totalHits', res.get('estimatedTotalHits', 0))
+            else:
+                logger.error(f"Unexpected result type in multi_search: {type(res)} - {res}")
+
+    # Limit to nb_per_page to prevent result explosion
+    final_hits = all_hits[:nb_per_page]
+
+    aggregated_result = {
+        "hits": final_hits,
+        "totalHits": total_hits,
+        "page": page,
+        "totalPages": (total_hits + nb_per_page - 1) // nb_per_page if total_hits > 0 else 1
+    }
+
     objs = []
     pagination = {}
-    if result.get("hits"):
-        pagination = extract_pagination_from_result(result, nb_per_page, page)
-        for res in result['hits']:
+    if aggregated_result["hits"]:
+        pagination = extract_pagination_from_result(aggregated_result, nb_per_page, page)
+        for res in aggregated_result['hits']:
             # crawled items
-            if not res.get('id'):
-                index = res['_federation']['indexUid']
-                #
-                domains_items = get_crawled_content_domains_items(index, res['uuid'])
-                obj = Items.Item(domains_items[next(iter(domains_items))])
-                meta = obj.get_meta(options={'link', 'crawler'})
-                # TODO change default separator
-                meta['date'] = meta['date'].replace('/', '-')
-                meta['domains_items'] = domains_items
-            else:
-                obj_type, subtype, obj_id = res['id'].split(':', 2)
-                if obj_type == 'item':
-                    obj = Items.Item(obj_id)
-                    meta = obj.get_meta(options={'url'})
-                elif obj_type == 'message':
-                    message = Messages.Message(obj_id)
-                    meta = message.get_meta(
-                        options={'barcodes', 'files', 'files-names', 'forwarded_from', 'full_date', 'icon', 'images',
-                                 'language', 'link', 'parent', 'parent_meta', 'protocol', 'qrcodes', 'reactions',
-                                 'user-account'})
-                    meta['protocol'] = chats_viewer.get_chat_protocol_meta(meta['protocol'])
-                    # if meta.get('reply_to'):
-                    #     print(meta['reply_to'])
-                elif obj_type == 'chat':
-                    obj = chats_viewer.get_obj_chat('chat', subtype, obj_id)
-                    meta = obj.get_meta(options={'link', 'icon', 'info', 'nb_participants', 'protocol', 'tags_safe', 'username', 'usernames'})
-                elif obj_type == 'user-account':
-                    obj = UsersAccount.UserAccount(obj_id, subtype)
-                    meta = obj.get_meta(options={'link', 'icon', 'info', 'nb_chats', 'protocol', 'tags_safe', 'username', 'usernames'})
-                elif obj_type == 'image':
-                    obj = Images.Image(obj_id)
-                    meta = obj.get_meta(options={'link', 'tags_safe'})
-                elif obj_type == 'screenshot':
-                    obj = Screenshots.Screenshot(obj_id)
-                    meta = obj.get_meta(options={'link', 'tags_safe'})
-                elif obj_type == 'domain':
-                    obj = Domains.Domain(obj_id)
-                    meta = obj.get_meta(options={'img', 'link', 'tags_safe'})
-                    # TEMP FIX  TODO
-                    meta['domain_type'] = meta['type']
-                    meta['type'] = 'domain'
-                    meta['first_seen'] = meta['first_seen'].replace('/', '-')
-                    meta['last_check'] = meta['last_check'].replace('/', '-')
-                elif obj_type == 'file-name':
-                    obj = FilesNames.FileName(obj_id)
-                    meta = obj.get_meta(options={'link'})
-                elif obj_type == 'post':
-                    obj = Posts.Post(obj_id)
-                    meta = obj.get_meta(options={'content', 'link', 'user-account', 'full_date', 'state', 'svg_icon'})
-                elif obj_type == 'forum-thread':
-                    obj = ForumThreads.ForumThread(obj_id, subtype)
-                    meta = obj.get_meta(options={'link', 'name', 'info', 'nb_posts', 'icon'})
-                elif obj_type == 'title':
-                    obj = Titles.Title(obj_id)
-                    meta = obj.get_meta(options={'link'})
+            try:
+                if not res.get('id'):
+                    index = res['_federation']['indexUid']
+                    #
+                    domains_items = get_crawled_content_domains_items(index, res['uuid'])
+                    if not domains_items:
+                        raise ValueError("No database record found for Meilisearch hit")
+                    obj = Items.Item(domains_items[next(iter(domains_items))])
+                    meta = obj.get_meta(options={'link', 'crawler'})
+                    # TODO change default separator
+                    meta['date'] = meta['date'].replace('/', '-')
+                    meta['domains_items'] = domains_items
                 else:
-                    print('ERROR UNKNOWN OBJ RESULT', res)
-                    continue  # TODO ERROR
+                    obj_type, subtype, obj_id = res['id'].split(':', 2)
+                    if obj_type == 'item':
+                        obj = Items.Item(obj_id)
+                        meta = obj.get_meta(options={'url'})
+                    elif obj_type == 'message':
+                        message = Messages.Message(obj_id)
+                        meta = message.get_meta(
+                            options={'barcodes', 'files', 'files-names', 'forwarded_from', 'full_date', 'icon', 'images',
+                                     'language', 'link', 'parent', 'parent_meta', 'protocol', 'qrcodes', 'reactions',
+                                     'user-account'})
+                        meta['protocol'] = chats_viewer.get_chat_protocol_meta(meta['protocol'])
+                        # if meta.get('reply_to'):
+                        #     print(meta['reply_to'])
+                    elif obj_type == 'chat':
+                        obj = chats_viewer.get_obj_chat('chat', subtype, obj_id)
+                        meta = obj.get_meta(options={'link', 'icon', 'info', 'nb_participants', 'protocol', 'tags_safe', 'username', 'usernames'})
+                    elif obj_type == 'user-account':
+                        obj = UsersAccount.UserAccount(obj_id, subtype)
+                        meta = obj.get_meta(options={'link', 'icon', 'info', 'nb_chats', 'protocol', 'tags_safe', 'username', 'usernames'})
+                    elif obj_type == 'image':
+                        obj = Images.Image(obj_id)
+                        meta = obj.get_meta(options={'link', 'tags_safe'})
+                    elif obj_type == 'screenshot':
+                        obj = Screenshots.Screenshot(obj_id)
+                        meta = obj.get_meta(options={'link', 'tags_safe'})
+                    elif obj_type == 'domain':
+                        obj = Domains.Domain(obj_id)
+                        meta = obj.get_meta(options={'img', 'link', 'tags_safe'})
+                        # TEMP FIX  TODO
+                        meta['domain_type'] = meta['type']
+                        meta['type'] = 'domain'
+                        meta['first_seen'] = meta['first_seen'].replace('/', '-')
+                        meta['last_check'] = meta['last_check'].replace('/', '-')
+                    elif obj_type == 'file-name':
+                        obj = FilesNames.FileName(obj_id)
+                        meta = obj.get_meta(options={'link'})
+                    elif obj_type == 'post':
+                        obj = Posts.Post(obj_id)
+                        meta = obj.get_meta(options={'content', 'link', 'user-account', 'full_date', 'state', 'svg_icon'})
+                    elif obj_type == 'forum-thread':
+                        obj = ForumThreads.ForumThread(obj_id, subtype)
+                        meta = obj.get_meta(options={'link', 'name', 'info', 'nb_posts', 'icon'})
+                    elif obj_type == 'title':
+                        obj = Titles.Title(obj_id)
+                        meta = obj.get_meta(options={'link'})
+                    else:
+                        print('ERROR UNKNOWN OBJ RESULT', res)
+                        continue  # TODO ERROR
+            except Exception as e:
+                logger.error(f"Failed to resolve Meilisearch hit {res.get('uuid')} in index {res.get('_federation', {}).get('indexUid')}: {e}")
+                # Create a fallback meta object so the result is still shown
+                meta = {
+                    'result': res.get('_formatted', {}).get('content', res.get('content', 'No content available')),
+                    'link': '#',
+                    'type': 'file-name',
+                    'username': 'Unknown',
+                    'full_date': 'Unknown'
+                }
 
             meta['result'] = res['_formatted']['content']
             objs.append(meta)

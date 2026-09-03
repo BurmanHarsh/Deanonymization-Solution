@@ -36,7 +36,7 @@ import Flask_config
 # Import Blueprint
 from blueprints.root import root
 from blueprints.dashboard import dashboard
-from blueprints.ui_submit import PasteSubmit  #  TODO RENAME ME
+from blueprints.ui_submit import ui_submit  #  TODO RENAME ME
 from blueprints.crawler_splash import crawler_splash
 from blueprints.correlation import correlation
 from blueprints.languages_ui import languages_ui
@@ -138,7 +138,7 @@ app.config['MAX_CONTENT_LENGTH'] = 2000 * 1024 * 1024
 # =========  BLUEPRINT  =========#
 app.register_blueprint(root, url_prefix=baseUrl)
 app.register_blueprint(dashboard, url_prefix=baseUrl)
-app.register_blueprint(PasteSubmit, url_prefix=baseUrl)
+app.register_blueprint(ui_submit, url_prefix=baseUrl)
 app.register_blueprint(crawler_splash, url_prefix=baseUrl)
 app.register_blueprint(correlation, url_prefix=baseUrl)
 app.register_blueprint(languages_ui, url_prefix=baseUrl)

@@ -50,7 +50,7 @@ text_max_size = int(Flask_config.SUBMIT_PASTE_TEXT_MAX_SIZE) / (1000*1000)
 file_max_size = int(Flask_config.SUBMIT_PASTE_FILE_MAX_SIZE) / (1000*1000*1000)
 allowed_extensions = ", ". join(Flask_config.SUBMIT_PASTE_FILE_ALLOWED_EXTENSIONS)
 
-PasteSubmit = Blueprint('PasteSubmit', __name__, template_folder=os.path.join(os.environ['AIL_FLASK'], 'templates/submit'))
+ui_submit = Blueprint('ui_submit', __name__, template_folder=os.path.join(os.environ['AIL_FLASK'], 'templates/submit'))
 
 # ============ Validators ============
 def limit_content_length():
@@ -88,7 +88,7 @@ def clean_filename(filename, whitelist=valid_filename_chars, replace=' '):
 
 # ============= ROUTES ==============
 
-@PasteSubmit.route("/PasteSubmit/", methods=['GET'])
+@ui_submit.route("/PasteSubmit/", methods=['GET'])
 @login_required
 @login_user_no_api
 def PasteSubmit_page():
@@ -103,7 +103,7 @@ def PasteSubmit_page():
                             file_max_size = file_max_size,
                             allowed_extensions = allowed_extensions)
 
-@PasteSubmit.route("/PasteSubmit/submit", methods=['POST'])
+@ui_submit.route("/PasteSubmit/submit", methods=['POST'])
 @login_required
 @login_user_no_api
 @limit_content_length()
@@ -208,7 +208,7 @@ def submit():
     return PasteSubmit_page()
 
 # TODO REFACTOR ME
-@PasteSubmit.route("/PasteSubmit/submit_status", methods=['GET'])
+@ui_submit.route("/PasteSubmit/submit_status", methods=['GET'])
 @login_required
 @login_user_no_api
 def submit_status():

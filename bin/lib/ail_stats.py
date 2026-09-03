@@ -67,6 +67,7 @@ def get_feeders_dashboard_full():
         d_time.append(datetime.datetime.utcfromtimestamp(i).strftime('%H:%M:%S'))
     return {'data': f_dashboard, 'dates': d_time}
 
+
 def get_feeders_dashboard():
     timestamp = get_current_feeder_timestamp(int(time.time()))
     # print(timestamp)
@@ -134,4 +135,3 @@ def get_global_stats():
 
 if __name__ == '__main__':
     print(get_global_stats())
-

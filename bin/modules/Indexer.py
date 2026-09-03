@@ -65,8 +65,7 @@ class Indexer(AbstractModule):
                     search_engine.Engine.index_chat_message(self.obj)
 
                 elif self.obj.type == 'item':
-                    if self.obj.is_crawled():
-                        search_engine.index_crawled_item(self.obj)
+                    search_engine.index_crawled_item(self.obj)
 
                 elif self.obj.type == 'file-name':
                     search_engine.index_file_name(self.obj)

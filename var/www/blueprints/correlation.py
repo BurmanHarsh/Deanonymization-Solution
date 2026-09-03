@@ -159,11 +159,14 @@ def show_correlation():
         filter_types = ail_objects.sanitize_objs_types(request.args.get('filter', '').split(','), default=True)
 
         # check if obj_id exist
+        print(f"DEBUG: Checking existence for type={obj_type}, subtype={subtype}, id={obj_id}")
         if not ail_objects.exists_obj(obj_type, subtype, obj_id):
+            print(f"DEBUG: Object {obj_id} NOT FOUND")
             return abort(404)
         # object exist
-        else: # TODO remove old dict key
-            dict_object = {"type": obj_type,
+        print(f"DEBUG: Object {obj_id} FOUND")
+        # TODO remove old dict key
+        dict_object = {"type": obj_type,
                            "id": obj_id,
                            "object_type": obj_type,
                            "gid": ail_objects.get_obj_global_id(obj_type, subtype, obj_id),
@@ -177,19 +180,19 @@ def show_correlation():
                            "nb_correl": ail_objects.get_obj_nb_correlations(obj_type, subtype, obj_id),
                            "correlation_filter_objects": get_correlation_filter_objects()
                            }
-            if subtype:
-                dict_object["subtype"] = subtype
-                dict_object["metadata"]['type_id'] = subtype
-            else:
-                dict_object["subtype"] = ''
-            dict_object["metadata_card"] = ail_objects.get_object_card_meta(obj_type, subtype, obj_id, related_btc=related_btc)
-            dict_object["metadata_card"]['tags_safe'] = True
+        if subtype:
+            dict_object["subtype"] = subtype
+            dict_object["metadata"]['type_id'] = subtype
+        else:
+            dict_object["subtype"] = ''
+        dict_object["metadata_card"] = ail_objects.get_object_card_meta(obj_type, subtype, obj_id, related_btc=related_btc)
+        dict_object["metadata_card"]['tags_safe'] = True
 
-            return render_template("show_correlation.html", dict_object=dict_object, bootstrap_label=bootstrap_label,
-                                   tags_selector_data=Tag.get_tags_selector_data(),
-                                   meta=dict_object["metadata_card"],
-                                   ollama_enabled=images_engine.is_ollama_enabled(),
-                                   ail_tags=dict_object["metadata_card"]["add_tags_modal"])
+        return render_template("show_correlation.html", dict_object=dict_object, bootstrap_label=bootstrap_label,
+                               tags_selector_data=Tag.get_tags_selector_data(),
+                               meta=dict_object["metadata_card"],
+                               ollama_enabled=images_engine.is_ollama_enabled(),
+                               ail_tags=dict_object["metadata_card"]["add_tags_modal"])
 
 @correlation.route('/correlation/get/description')
 @login_required
@@ -409,31 +412,34 @@ def show_relationship():
         relationships = ail_objects.sanitize_relationships(request.args.get('relationships', '').split(','))
 
         # check if obj_id exist
+        print(f"DEBUG: Checking existence for type={obj_type}, subtype={subtype}, id={obj_id}")
         if not ail_objects.exists_obj(obj_type, subtype, obj_id):
+            print(f"DEBUG: Object {obj_id} NOT FOUND")
             return abort(404)
         # object exist
-        else: # TODO remove old dict key
-            dict_object = {"type": obj_type,
-                           "id": obj_id,
-                           "object_type": obj_type,
-                           "max_nodes": max_nodes, "level": level,
-                           "correlation_id": obj_id,
-                           "relationships": relationships, "relationships_str": ",".join(relationships),
-                           "filter": filter_types, "filter_str": ",".join(filter_types),
-                           "hidden": objs_hidden, "hidden_str": ",".join(objs_hidden),
+        print(f"DEBUG: Object {obj_id} FOUND")
+        # TODO remove old dict key
+        dict_object = {"type": obj_type,
+                       "id": obj_id,
+                       "object_type": obj_type,
+                       "max_nodes": max_nodes, "level": level,
+                       "correlation_id": obj_id,
+                       "relationships": relationships, "relationships_str": ",".join(relationships),
+                       "filter": filter_types, "filter_str": ",".join(filter_types),
+                       "hidden": objs_hidden, "hidden_str": ",".join(objs_hidden),
 
-                           "metadata": ail_objects.get_object_meta(obj_type, subtype, obj_id, options={'tags', 'info', 'icon', 'username'}, flask_context=True),
-                           "nb_relation": ail_objects.get_obj_nb_relationships(obj_type, subtype, obj_id)
-                           }
-            if subtype:
-                dict_object["subtype"] = subtype
-                dict_object["metadata"]['type_id'] = subtype
-            else:
-                dict_object["subtype"] = ''
-            dict_object["metadata_card"] = ail_objects.get_object_card_meta(obj_type, subtype, obj_id)
-            dict_object["metadata_card"]['tags_safe'] = True
-            return render_template("show_relationship.html", dict_object=dict_object, bootstrap_label=bootstrap_label,
-                                   tags_selector_data=Tag.get_tags_selector_data(),
-                                   meta=dict_object["metadata_card"],
-                                   ail_tags=dict_object["metadata_card"]["add_tags_modal"])
+                       "metadata": ail_objects.get_object_meta(obj_type, subtype, obj_id, options={'tags', 'info', 'icon', 'username'}, flask_context=True),
+                       "nb_relation": ail_objects.get_obj_nb_relationships(obj_type, subtype, obj_id)
+                       }
+        if subtype:
+            dict_object["subtype"] = subtype
+            dict_object["metadata"]['type_id'] = subtype
+        else:
+            dict_object["subtype"] = ''
+        dict_object["metadata_card"] = ail_objects.get_object_card_meta(obj_type, subtype, obj_id)
+        dict_object["metadata_card"]['tags_safe'] = True
+        return render_template("show_relationship.html", dict_object=dict_object, bootstrap_label=bootstrap_label,
+                               tags_selector_data=Tag.get_tags_selector_data(),
+                               meta=dict_object["metadata_card"],
+                               ail_tags=dict_object["metadata_card"]["add_tags_modal"])
 

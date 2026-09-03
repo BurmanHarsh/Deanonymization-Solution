@@ -116,7 +116,7 @@
 					<div class="alert alert-info">{{ message }}</div>
 				{% endif %}
 
-				<form action="{{ url_for('PasteSubmit.submit') }}" id="pasteSubmitForm" method="post"
+				<form action="{{ url_for('ui_submit.submit') }}" id="pasteSubmitForm" method="post"
 					enctype=multipart/form-data onsubmit="submitPaste()">
 
 					<input type="hidden" id="tags_taxonomies" name="tags_taxonomies" value="test">
@@ -479,7 +479,7 @@
 	$(".progress-bar").css("width", i + "%").text(i + " %");
 	function makeProgress() {
 
-		$.getJSON("{{ url_for('PasteSubmit.submit_status') }}?UUID={{ UUID }}",
+		$.getJSON("{{ url_for('ui_submit.submit_status') }}?UUID={{ UUID }}",
 			function (data) {
 
 				var end = data.end;
